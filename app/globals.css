@@ -1,0 +1,170 @@
+@import "tailwindcss";
+
+/* =========================================
+   Design Tokens
+   ========================================= */
+
+:root {
+  --background: #000;
+  --foreground: #fff;
+  --surface: #0a0a0a;
+  --surface-hover: #141414;
+  --border-color: #1f1f1f;
+  --muted: #737373;
+  --primary: #fff;
+  --primary-hover: #e5e5e5;
+  --primary-soft: rgba(255, 255, 255, 0.06);
+  --accent: #a3a3a3;
+  --accent-hover: #d4d4d4;
+  --danger: #dc2626;
+  --danger-hover: #b91c1c;
+  --success: #22c55e;
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+
+  --space-section: clamp(5rem, 8vw, 7rem);
+  --space-container: clamp(1rem, 4vw, 2rem);
+}
+
+/* =========================================
+   Tailwind Theme Mapping
+   ========================================= */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-border: var(--border-color);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
+  --color-success: var(--success);
+  --font-sans: var(--font-inter);
+}
+
+/* =========================================
+   Base Styles (non-conflicting with Tailwind)
+   ========================================= */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter, system-ui, -apple-system, sans-serif);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+/* =========================================
+   Animations
+   ========================================= */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out both;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out both;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out both;
+}
+
+.animate-slide-out-right {
+  animation: slideOutRight 0.3s ease-in both;
+}
+
+/* =========================================
+   Utility Classes
+   ========================================= */
+
+.glass {
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* =========================================
+   Scrollbar
+   ========================================= */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
