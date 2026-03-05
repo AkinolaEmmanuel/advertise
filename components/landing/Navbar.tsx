@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 
 const navLinks = [
+  { href: "/brands", label: "Explore", isExternal: true },
   { href: "#features", label: "Features" },
   { href: "#how-it-works", label: "How it Works" },
   { href: "#pricing", label: "Pricing" },
@@ -18,14 +19,20 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 glass">
       <div className="max-w-6xl mx-auto px-6 sm:px-8 py-5 flex items-center justify-between">
         <Link href="/">
-          <span className="text-xl font-bold tracking-tight text-white">Advertise</span>
+          <span className="text-xl font-bold tracking-tight text-white">pòlówó</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-8 text-sm text-muted">
           {navLinks.map((link) => (
-            <a key={link.href} href={link.href} className="hover:text-white transition-colors">
-              {link.label}
-            </a>
+            link.isExternal ? (
+              <Link key={link.href} href={link.href} className="hover:text-white transition-colors">
+                {link.label}
+              </Link>
+            ) : (
+              <a key={link.href} href={link.href} className="hover:text-white transition-colors">
+                {link.label}
+              </a>
+            )
           ))}
         </nav>
 
@@ -64,17 +71,28 @@ export default function Navbar() {
           >
             <nav className="flex flex-col px-6 py-4 gap-1">
               {navLinks.map((link) => (
-                <motion.a
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setIsOpen(false)}
-                  className="py-3 text-sm text-muted hover:text-white transition-colors"
-                  initial={{ x: -12, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.05 }}
-                >
-                  {link.label}
-                </motion.a>
+                link.isExternal ? (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setIsOpen(false)}
+                    className="py-3 text-sm text-muted hover:text-white transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                ) : (
+                  <motion.a
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setIsOpen(false)}
+                    className="py-3 text-sm text-muted hover:text-white transition-colors"
+                    initial={{ x: -12, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.05 }}
+                  >
+                    {link.label}
+                  </motion.a>
+                )
               ))}
               <div className="flex flex-col gap-3 pt-4 mt-2 border-t border-white/5">
                 <Link

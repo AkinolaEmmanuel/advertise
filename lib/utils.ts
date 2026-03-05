@@ -18,16 +18,25 @@ export function formatPrice(price: number): string {
 export function buildWhatsAppUrl(
     phone: string,
     brandName: string,
-    items: { name: string; quantity: number; price: number }[]
+    items: { name: string; quantity: number; price: number }[],
+    customer?: { name: string; phone: string }
 ): string {
     const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
     let message = `🛒 *New Order from ${brandName}*\n\n`;
+
+    if (customer?.name) {
+        message += `👤 *Customer:* ${customer.name}\n`;
+        if (customer.phone) message += `📞 *Phone:* ${customer.phone}\n`;
+        message += `\n`;
+    }
+
+    message += `*Items:*\n`;
     items.forEach((item, i) => {
         message += `${i + 1}. ${item.name} × ${item.quantity} — ${formatPrice(item.price * item.quantity)}\n`;
     });
     message += `\n💰 *Total: ${formatPrice(total)}*`;
-    message += `\n\nSent via Advertise`;
+    message += `\n\nSent via pòlówó`;
 
     const cleanPhone = phone.replace(/\D/g, "");
     return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;

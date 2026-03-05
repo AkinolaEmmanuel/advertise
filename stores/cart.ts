@@ -64,7 +64,7 @@ export const useCartStore = create<CartState>()(
             },
         }),
         {
-            name: "advertise-cart",
+            name: "polowo-cart",
         }
     )
 );

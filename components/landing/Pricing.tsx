@@ -7,14 +7,14 @@ import { Check } from "lucide-react";
 const plans = [
   {
     name: "Standard",
-    desc: "Perfect for getting started",
+    desc: "Perfect for growing sellers who want a professional edge.",
     price: "₦2,500",
     features: [
+      "Everything in Trial",
       "Unlimited products",
-      "WhatsApp DM checkout",
-      "Custom billboard URL",
+      "WhatsApp ordering",
+      "Custom slug (polowo.app/you)",
       "Mobile-optimized storefront",
-      "Product toggle system",
     ],
     cta: "Start Free Trial",
     highlighted: false,

@@ -45,7 +45,7 @@ export default function DashboardOverview() {
         <h1 className="text-2xl lg:text-3xl font-bold text-foreground">
           Welcome, {brand.name}
         </h1>
-        <p className="text-muted mt-1">Manage your online billboard</p>
+        <p className="text-muted mt-1">Manage your online pòlówó</p>
       </div>
 
       <div className="glass rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
@@ -57,7 +57,7 @@ export default function DashboardOverview() {
           )}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm text-muted">Your billboard link</p>
+          <p className="text-sm text-muted">Your pòlówó link</p>
           <p className="text-foreground font-medium truncate">{storeUrl}</p>
         </div>
         <div className="flex gap-2">

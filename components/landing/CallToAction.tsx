@@ -15,7 +15,7 @@ export default function CallToAction() {
           transition={{ duration: 0.5 }}
           className="text-3xl sm:text-4xl font-bold mb-4"
         >
-          Ready to build your billboard?
+          Ready to build your pòlówó?
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 12 }}
@@ -24,7 +24,7 @@ export default function CallToAction() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="text-muted text-lg mb-10"
         >
-          Join thousands of small businesses selling smarter. Free for 30 days.
+          Join thousands of small businesses selling smarter. Free for 7 days.
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 12 }}

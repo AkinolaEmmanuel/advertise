@@ -10,9 +10,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Advertise — Your Online Billboard",
+  title: "pòlówó — Your Online pòlówó",
   description:
-    "Turn your products into a professional billboard in 60 seconds. The visual-first storefront for small businesses.",
+    "Turn your products into a professional pòlówó in 60 seconds. The visual-first storefront for small businesses.",
 };
 
 export default function RootLayout({

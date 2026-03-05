@@ -20,6 +20,14 @@ export default function ProductForm({ brandId, product, onSuccess, onCancel }: P
   const [name, setName] = useState(product?.name ?? "");
   const [description, setDescription] = useState(product?.description ?? "");
   const [price, setPrice] = useState(product?.price?.toString() ?? "");
+  const [quantity, setQuantity] = useState(
+    product?.quantity !== undefined && product.quantity >= 0
+      ? product.quantity.toString()
+      : ""
+  );
+  const [trackStock, setTrackStock] = useState(
+    product?.quantity !== undefined && product.quantity >= 0
+  );
   const [imageUrl, setImageUrl] = useState(product?.image_url ?? "");
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -73,6 +81,15 @@ export default function ProductForm({ brandId, product, onSuccess, onCancel }: P
       return;
     }
 
+    let quantityNum = -1;
+    if (trackStock) {
+      quantityNum = parseInt(quantity, 10);
+      if (isNaN(quantityNum) || quantityNum < 0) {
+        toast.error("Please enter a valid quantity");
+        return;
+      }
+    }
+
     setIsLoading(true);
     const supabase = createClient();
 
@@ -82,6 +99,7 @@ export default function ProductForm({ brandId, product, onSuccess, onCancel }: P
       description: description.trim() || null,
       price: priceNum,
       image_url: imageUrl || null,
+      quantity: quantityNum,
     };
 
     if (product) {
@@ -114,7 +132,7 @@ export default function ProductForm({ brandId, product, onSuccess, onCancel }: P
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div
-        className="relative aspect-video bg-surface-hover rounded-xl border-2 border-dashed border-border hover:border-primary/50 transition-colors cursor-pointer overflow-hidden"
+        className="relative aspect-[4/3] sm:aspect-video bg-surface-hover rounded-xl border-2 border-dashed border-border hover:border-white/30 transition-colors cursor-pointer overflow-hidden"
         onClick={() => fileInputRef.current?.click()}
       >
         {imageUrl ? (
@@ -139,11 +157,11 @@ export default function ProductForm({ brandId, product, onSuccess, onCancel }: P
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-muted">
             {isUploading ? (
-              <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent" />
+              <div className="animate-spin rounded-full h-8 w-8 border-2 border-white border-t-transparent" />
             ) : (
               <>
                 <Upload size={24} className="mb-2" />
-                <span className="text-sm">Click to upload image</span>
+                <span className="text-sm">Tap to upload image</span>
                 <span className="text-xs mt-1">Max 5MB</span>
               </>
             )}
@@ -189,6 +207,35 @@ export default function ProductForm({ brandId, product, onSuccess, onCancel }: P
         onChange={(e) => setPrice(e.target.value)}
         required
       />
+
+      <div className="space-y-3">
+        <label className="flex items-center gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={trackStock}
+            onChange={(e) => {
+              setTrackStock(e.target.checked);
+              if (!e.target.checked) setQuantity("");
+            }}
+            className="sr-only peer"
+          />
+          <div className="w-9 h-5 bg-surface-hover rounded-full peer peer-checked:bg-white transition-colors duration-200 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white peer-checked:after:bg-black after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full relative" />
+          <span className="text-sm text-muted">Track stock quantity</span>
+        </label>
+
+        {trackStock && (
+          <Input
+            id="product-quantity"
+            label="Quantity in Stock"
+            type="number"
+            placeholder="0"
+            min="0"
+            value={quantity}
+            onChange={(e) => setQuantity(e.target.value)}
+            required
+          />
+        )}
+      </div>
 
       <div className="flex gap-3 pt-2">
         <Button type="button" variant="secondary" onClick={onCancel} className="flex-1">

@@ -12,9 +12,15 @@ interface ProductCardProps {
   onDelete: (id: string) => void;
 }
 
+function isOutOfStock(product: Product): boolean {
+  return product.quantity >= 0 && product.quantity === 0;
+}
+
 export default function ProductCard({ product, onToggle, onEdit, onDelete }: ProductCardProps) {
+  const outOfStock = isOutOfStock(product);
+
   return (
-    <div className="bg-surface border border-border rounded-2xl overflow-hidden transition-all duration-300 hover:border-primary/30 group animate-fade-in">
+    <div className="bg-surface border border-border rounded-2xl overflow-hidden transition-all duration-300 hover:border-white/20 group animate-fade-in">
       <div className="relative aspect-square bg-surface-hover">
         {product.image_url ? (
           <Image
@@ -37,12 +43,27 @@ export default function ProductCard({ product, onToggle, onEdit, onDelete }: Pro
             </span>
           </div>
         )}
+
+        {outOfStock && product.is_active && (
+          <div className="absolute top-2 left-2">
+            <span className="text-[10px] font-bold uppercase tracking-wider bg-danger text-white px-2 py-0.5 rounded-md">
+              Out of Stock
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="p-4 space-y-3">
         <div>
           <h3 className="font-semibold text-foreground text-sm truncate">{product.name}</h3>
-          <p className="text-primary font-bold text-lg">{formatPrice(product.price)}</p>
+          <div className="flex items-center justify-between mt-1">
+            <p className="text-primary font-bold text-lg">{formatPrice(product.price)}</p>
+            {product.quantity >= 0 && (
+              <span className={`text-xs font-medium ${outOfStock ? "text-danger" : "text-muted"}`}>
+                {outOfStock ? "0 left" : `${product.quantity} left`}
+              </span>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center justify-between">
@@ -53,14 +74,14 @@ export default function ProductCard({ product, onToggle, onEdit, onDelete }: Pro
               onChange={() => onToggle(product.id, !product.is_active)}
               className="sr-only peer"
             />
-            <div className="w-9 h-5 bg-surface-hover rounded-full peer peer-checked:bg-primary transition-colors duration-200 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full" />
+            <div className="w-9 h-5 bg-surface-hover rounded-full peer peer-checked:bg-white transition-colors duration-200 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white peer-checked:after:bg-black after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full" />
             <span className="ml-2 text-xs text-muted">{product.is_active ? "Live" : "Off"}</span>
           </label>
 
           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
               onClick={() => onEdit(product)}
-              className="p-2 rounded-lg text-muted hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
+              className="p-2 rounded-lg text-muted hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
               title="Edit"
             >
               <Pencil size={14} />

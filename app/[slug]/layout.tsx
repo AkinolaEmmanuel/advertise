@@ -20,8 +20,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!brand) return { title: "Not Found" };
 
   return {
-    title: `${brand.name} — Advertise`,
-    description: brand.bio || `Browse ${brand.name}'s products on Advertise`,
+    title: `${brand.name} — pòlówó`,
+    description: brand.bio || `Browse ${brand.name}'s products on pòlówó`,
   };
 }
 

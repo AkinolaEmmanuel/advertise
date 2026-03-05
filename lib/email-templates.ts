@@ -1,6 +1,6 @@
 export function welcomeEmail(brandName: string) {
   return {
-    subject: `Welcome to Advertise, ${brandName}!`,
+    subject: `Welcome to pòlówó, ${brandName}!`,
     html: `
 <!DOCTYPE html>
 <html>
@@ -15,11 +15,11 @@ export function welcomeEmail(brandName: string) {
         <table width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background-color:#0a0a0a;border:1px solid #1f1f1f;border-radius:16px;overflow:hidden;">
           <tr>
             <td style="padding:32px 32px 24px;">
-              <h1 style="margin:0 0 8px;font-size:20px;font-weight:700;color:#fff;">Advertise</h1>
+              <h1 style="margin:0 0 8px;font-size:20px;font-weight:700;color:#fff;">pòlówó</h1>
               <div style="width:40px;height:2px;background:#fff;margin-bottom:24px;"></div>
               <h2 style="margin:0 0 12px;font-size:24px;font-weight:700;color:#fff;">Welcome, ${brandName}!</h2>
               <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#737373;">
-                Your billboard is ready. Here's how to get started:
+                Your pòlówó is ready. Here's how to get started:
               </p>
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
                 <tr>
@@ -37,11 +37,11 @@ export function welcomeEmail(brandName: string) {
                 <tr>
                   <td style="padding:12px 0;">
                     <span style="color:#fff;font-weight:600;font-size:14px;">3.</span>
-                    <span style="color:#a3a3a3;font-size:14px;margin-left:8px;">Share your billboard link everywhere</span>
+                    <span style="color:#a3a3a3;font-size:14px;margin-left:8px;">Share your pòlówó link everywhere</span>
                   </td>
                 </tr>
               </table>
-              <a href="${process.env.NEXT_PUBLIC_APP_URL || "https://advertise.app"}/dashboard"
+              <a href="${process.env.NEXT_PUBLIC_APP_URL || "https://polowo.app"}/dashboard"
                 style="display:inline-block;padding:12px 28px;background:#fff;color:#000;font-size:14px;font-weight:600;text-decoration:none;border-radius:8px;">
                 Go to Dashboard
               </a>
@@ -50,7 +50,7 @@ export function welcomeEmail(brandName: string) {
           <tr>
             <td style="padding:20px 32px;border-top:1px solid #1f1f1f;">
               <p style="margin:0;font-size:12px;color:#525252;">
-                You're receiving this because you signed up for Advertise. Your 30-day free trial has started.
+                You're receiving this because you signed up for pòlówó. Your 30-day free trial has started.
               </p>
             </td>
           </tr>
@@ -65,7 +65,7 @@ export function welcomeEmail(brandName: string) {
 
 export function passwordResetEmail(resetUrl: string) {
   return {
-    subject: "Reset your Advertise password",
+    subject: "Reset your pòlówó password",
     html: `
 <!DOCTYPE html>
 <html>
@@ -80,7 +80,7 @@ export function passwordResetEmail(resetUrl: string) {
         <table width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background-color:#0a0a0a;border:1px solid #1f1f1f;border-radius:16px;overflow:hidden;">
           <tr>
             <td style="padding:32px 32px 24px;">
-              <h1 style="margin:0 0 8px;font-size:20px;font-weight:700;color:#fff;">Advertise</h1>
+              <h1 style="margin:0 0 8px;font-size:20px;font-weight:700;color:#fff;">pòlówó</h1>
               <div style="width:40px;height:2px;background:#fff;margin-bottom:24px;"></div>
               <h2 style="margin:0 0 12px;font-size:22px;font-weight:700;color:#fff;">Reset your password</h2>
               <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#737373;">
@@ -142,7 +142,7 @@ export function orderNotificationEmail(
         <table width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background-color:#0a0a0a;border:1px solid #1f1f1f;border-radius:16px;overflow:hidden;">
           <tr>
             <td style="padding:32px 32px 24px;">
-              <h1 style="margin:0 0 8px;font-size:20px;font-weight:700;color:#fff;">Advertise</h1>
+              <h1 style="margin:0 0 8px;font-size:20px;font-weight:700;color:#fff;">pòlówó</h1>
               <div style="width:40px;height:2px;background:#fff;margin-bottom:24px;"></div>
               <h2 style="margin:0 0 12px;font-size:22px;font-weight:700;color:#fff;">New Order 🎉</h2>
               <p style="margin:0 0 20px;font-size:15px;color:#737373;">You have a new order on <strong style="color:#fff;">${brandName}</strong></p>
@@ -153,7 +153,7 @@ export function orderNotificationEmail(
                   <td style="padding:12px 0;color:#fff;font-size:15px;font-weight:700;text-align:right;">${total}</td>
                 </tr>
               </table>
-              <a href="${process.env.NEXT_PUBLIC_APP_URL || "https://advertise.app"}/dashboard"
+              <a href="${process.env.NEXT_PUBLIC_APP_URL || "https://polowo.app"}/dashboard"
                 style="display:inline-block;padding:12px 28px;background:#fff;color:#000;font-size:14px;font-weight:600;text-decoration:none;border-radius:8px;">
                 View Dashboard
               </a>

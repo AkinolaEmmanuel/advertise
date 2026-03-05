@@ -18,7 +18,7 @@ export default function Hero() {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold leading-[1.1] tracking-tight"
             >
-              Create a personalized online billboard for{" "}
+              Create a personalized online pòlówó for{" "}
               <span className="text-red-200 underline decoration-white/20 underline-offset-8">
                 your products
               </span>{" "}
@@ -29,7 +29,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="mt-6 text-lg text-muted max-w-lg leading-relaxed"
+              className="mt-6 text-base text-muted max-w-lg leading-relaxed"
             >
               The visual-first storefront for small businesses. Share one link, showcase
               everything, receive orders via Whatsapp.
@@ -43,27 +43,20 @@ export default function Hero() {
             >
               <Link
                 href="/signup"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg bg-white text-black font-semibold hover:bg-neutral-200 transition-all"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white text-black font-semibold hover:bg-neutral-200 transition-all text-sm uppercase tracking-wider"
               >
-                Start Free for 30 Days
+                Start Free for 7 Days
                 <ArrowRight size={18} />
               </Link>
-              <a
-                href="#how-it-works"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg border border-white/15 text-muted font-medium hover:text-white hover:border-white/30 transition-all"
+              <Link
+                href="/brands"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border border-white/10 bg-white/5 text-white font-medium hover:bg-white/10 transition-all text-sm uppercase tracking-wider"
               >
-                See How it Works
-              </a>
+                Discover Brands
+              </Link>
             </motion.div>
 
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.45 }}
-              className="mt-5 text-sm text-muted/60"
-            >
-              No credit card required · Free 30-day trial
-            </motion.p>
+      
           </div>
 
           <div className="relative lg:pl-8">
@@ -76,7 +69,7 @@ export default function Hero() {
               <div className="relative rounded-2xl overflow-hidden border border-white/10">
                 <Image
                   src="/hero.png"
-                  alt="Seller showcasing products on Advertise"
+                  alt="Seller showcasing products on pòlówó"
                   width={600}
                   height={500}
                   className="w-full h-auto object-cover"
@@ -93,7 +86,7 @@ export default function Hero() {
                 <div className="rounded-xl overflow-hidden border border-white/10 shadow-2xl shadow-black/50">
                   <Image
                     src="/hero-illustration.png"
-                    alt="Billboard illustration"
+                    alt="pòlówó illustration"
                     width={180}
                     height={180}
                     className="w-full h-auto"

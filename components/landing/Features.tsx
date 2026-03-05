@@ -13,7 +13,7 @@ import {
 const features = [
   {
     icon: Palette,
-    title: "Billboard Aesthetic",
+    title: "pòlówó Aesthetic",
     desc: "Premium visual-first product display that makes your brand look professional",
   },
   {
@@ -39,7 +39,7 @@ const features = [
   {
     icon: Globe,
     title: "One Link for All",
-    desc: "Share advertise.app/yourname everywhere — bio, DMs, everywhere",
+    desc: "Share polowo.app/yourname everywhere — bio, DMs, everywhere",
   },
 ];
 

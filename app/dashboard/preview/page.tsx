@@ -14,7 +14,7 @@ export default function PreviewPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Preview</h1>
-          <p className="text-muted mt-1 text-sm">See your billboard as customers see it</p>
+          <p className="text-muted mt-1 text-sm">See your pòlówó as customers see it</p>
         </div>
         <Link href={storeUrl} target="_blank">
           <Button variant="secondary" size="sm">
@@ -32,13 +32,13 @@ export default function PreviewPage() {
             <div className="w-3 h-3 rounded-full bg-success/50" />
           </div>
           <div className="flex-1 text-center">
-            <span className="text-xs text-muted">advertise.app/{brand.slug}</span>
+            <span className="text-xs text-muted">polowo.app/{brand.slug}</span>
           </div>
         </div>
         <iframe
           src={storeUrl}
           className="w-full h-[calc(100vh-220px)] min-h-[500px] border-0"
-          title="Billboard Preview"
+          title="pòlówó Preview"
         />
       </div>
     </div>

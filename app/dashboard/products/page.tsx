@@ -108,7 +108,7 @@ export default function ProductsPage() {
             <Package size={32} className="text-primary" />
           </div>
           <h3 className="text-lg font-semibold text-foreground mb-1">No products yet</h3>
-          <p className="text-muted text-sm mb-4">Add your first product to get your billboard live</p>
+          <p className="text-muted text-sm mb-4">Add your first product to get your pòlówó live</p>
           <Button onClick={() => setIsFormOpen(true)}>
             <Plus size={16} />
             Add Product

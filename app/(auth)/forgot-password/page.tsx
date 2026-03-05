@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 import Button from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import toast from "react-hot-toast";
@@ -19,20 +20,17 @@ export default function ForgotPasswordPage() {
     }
 
     setIsLoading(true);
+    const supabase = createClient();
 
-    try {
-      const res = await fetch("/api/mail/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/callback`,
+    });
 
-      if (!res.ok) throw new Error("Request failed");
-
+    if (error) {
+      toast.error(error.message);
+    } else {
       setSent(true);
       toast.success("Check your email for the reset link!");
-    } catch {
-      toast.error("Something went wrong. Please try again.");
     }
 
     setIsLoading(false);
