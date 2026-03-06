@@ -7,7 +7,7 @@ const testimonials = [
   {
     name: "Amaka O.",
     role: "Fashion Brand Owner",
-    text: "I set up my pòlówó in 5 minutes and got my first WhatsApp order the same day. This is everything I needed.",
+    text: "I set up my store in 5 minutes and got my first WhatsApp order the same day. This is everything I needed.",
   },
   {
     name: "Tunde K.",
@@ -33,7 +33,7 @@ export default function Testimonials() {
           className="text-center mb-16"
         >
           <h2 className="text-3xl sm:text-4xl font-bold">Loved by small businesses</h2>
-          <p className="mt-4 text-muted text-lg">Join hundreds of sellers already using pòlówó</p>
+          <p className="mt-4 text-muted text-lg">Join hundreds of sellers already in our marketplace</p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

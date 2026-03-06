@@ -15,7 +15,7 @@ export default function RenewPage() {
         <div>
           <h1 className="text-2xl font-bold text-white uppercase tracking-tight">Subscription Expired</h1>
           <p className="text-muted mt-2">
-            Your access to the pòlówó dashboard and your public storefront has been restricted. 
+            Your access to the dashboard and your public storefront has been restricted. 
             Renew your subscription to continue showcasing your products.
           </p>
         </div>

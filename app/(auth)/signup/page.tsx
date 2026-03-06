@@ -94,7 +94,7 @@ export default function SignUpPage() {
         return;
       }
 
-      toast.success("Welcome to pòlówó!");
+      toast.success("Account created! Welcome aboard.");
       router.push("/dashboard");
       router.refresh();
     } catch {
@@ -107,7 +107,7 @@ export default function SignUpPage() {
   return (
     <>
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-foreground">Create your pòlówó</h2>
+        <h2 className="text-2xl font-bold text-foreground">Create your store</h2>
         <p className="text-muted mt-1.5 text-sm">Start showcasing your products in 60 seconds</p>
       </div>
 
@@ -139,7 +139,7 @@ export default function SignUpPage() {
                 }`}>
                   {isChecking ? "Checking..." : 
                    isAvailable === false ? (availabilityError || "Taken") : 
-                   isAvailable === true ? `polowo.app/${finalSlug}` : ""}
+                   isAvailable === true ? `polowo.live/${finalSlug}` : ""}
                 </span>
               </div>
             </div>

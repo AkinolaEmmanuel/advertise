@@ -49,7 +49,7 @@ export default function BrandsDirectory() {
         <div className="space-y-4 mb-12">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tighter uppercase">Marketplace Directory</h1>
           <p className="text-muted max-w-2xl">
-            Discover premium brands using pòlówó to power their online pòlówós. 
+            Discover premium brands using our platform to power their online stores. 
             All brands listed here are active and verified by our team.
           </p>
           
@@ -103,7 +103,7 @@ export default function BrandsDirectory() {
                       <h3 className="font-bold text-white uppercase tracking-tight">{brand.name}</h3>
                       {brand.is_verified && <BadgeCheck size={16} className="text-primary" />}
                     </div>
-                    <p className="text-xs text-muted">polowo.app/{brand.slug}</p>
+                    <p className="text-xs text-muted">polowo.live/{brand.slug}</p>
                   </div>
                 </div>
 
@@ -114,7 +114,7 @@ export default function BrandsDirectory() {
                 )}
 
                 <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary group-hover:gap-4 transition-all">
-                  Visit pòlówó <ArrowRight size={14} />
+                  Visit store <ArrowRight size={14} />
                 </div>
               </Link>
             ))}

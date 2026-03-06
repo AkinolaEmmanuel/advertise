@@ -40,7 +40,7 @@ export default function LoginPage() {
       toast.success("Welcome back!");
       
       // Check if user is an admin
-      const adminEmails = process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(",") || ["akinola@gmail.com", "admin@polowo.com"];
+      const adminEmails = process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(",") || ["akinola@gmail.com", "admin@polowo.live"];
       if (adminEmails.includes(data.user.email || "")) {
         router.push("/admin");
       } else {
@@ -59,7 +59,7 @@ export default function LoginPage() {
     <>
       <div className="text-center mb-6">
         <h2 className="text-2xl font-bold text-foreground">Welcome back</h2>
-        <p className="text-muted mt-1.5 text-sm">Sign in to manage your pòlówó</p>
+        <p className="text-muted mt-1.5 text-sm">Sign in to manage your store</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">

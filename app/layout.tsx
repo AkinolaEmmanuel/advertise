@@ -10,9 +10,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "pòlówó — Your Online pòlówó",
+  title: "pòlówó — Create your own online store",
   description:
-    "Turn your products into a professional pòlówó in 60 seconds. The visual-first storefront for small businesses.",
+    "Turn your products into a professional online storefront in 60 seconds. The visual-first storefront for small businesses.",
 };
 
 export default function RootLayout({

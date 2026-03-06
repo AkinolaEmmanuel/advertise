@@ -19,7 +19,7 @@ export function welcomeEmail(brandName: string) {
               <div style="width:40px;height:2px;background:#fff;margin-bottom:24px;"></div>
               <h2 style="margin:0 0 12px;font-size:24px;font-weight:700;color:#fff;">Welcome, ${brandName}!</h2>
               <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#737373;">
-                Your pòlówó is ready. Here's how to get started:
+                Your online store is ready. Here's how to get started:
               </p>
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
                 <tr>
@@ -37,11 +37,11 @@ export function welcomeEmail(brandName: string) {
                 <tr>
                   <td style="padding:12px 0;">
                     <span style="color:#fff;font-weight:600;font-size:14px;">3.</span>
-                    <span style="color:#a3a3a3;font-size:14px;margin-left:8px;">Share your pòlówó link everywhere</span>
+                    <span style="color:#a3a3a3;font-size:14px;margin-left:8px;">Share your store link everywhere</span>
                   </td>
                 </tr>
               </table>
-              <a href="${process.env.NEXT_PUBLIC_APP_URL || "https://polowo.app"}/dashboard"
+              <a href="${process.env.NEXT_PUBLIC_APP_URL || "https://polowo.live"}/dashboard"
                 style="display:inline-block;padding:12px 28px;background:#fff;color:#000;font-size:14px;font-weight:600;text-decoration:none;border-radius:8px;">
                 Go to Dashboard
               </a>
@@ -153,7 +153,7 @@ export function orderNotificationEmail(
                   <td style="padding:12px 0;color:#fff;font-size:15px;font-weight:700;text-align:right;">${total}</td>
                 </tr>
               </table>
-              <a href="${process.env.NEXT_PUBLIC_APP_URL || "https://polowo.app"}/dashboard"
+              <a href="${process.env.NEXT_PUBLIC_APP_URL || "https://polowo.live"}/dashboard"
                 style="display:inline-block;padding:12px 28px;background:#fff;color:#000;font-size:14px;font-weight:600;text-decoration:none;border-radius:8px;">
                 View Dashboard
               </a>

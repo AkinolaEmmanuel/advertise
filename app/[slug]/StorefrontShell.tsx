@@ -92,7 +92,7 @@ function StorefrontHeader({ brand }: { brand: Brand }) {
             className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
               isDark ? "bg-white/5 border-white/5 hover:bg-white/10" : "bg-black/5 border-black/5 hover:bg-black/10"
             }`}
-            title="Share pòlówó"
+            title="Share store"
           >
             <Share2 size={18} />
           </button>

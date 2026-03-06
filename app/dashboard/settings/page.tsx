@@ -217,7 +217,7 @@ export default function SettingsPage() {
     <div className="max-w-2xl space-y-12 animate-fade-in pb-20">
       <div>
         <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Settings</h1>
-        <p className="text-muted mt-1 text-sm">Customize your brand and pòlówó appearance</p>
+        <p className="text-muted mt-1 text-sm">Customize your brand and storefront appearance</p>
       </div>
 
       <section className="space-y-4">
@@ -446,10 +446,10 @@ export default function SettingsPage() {
           <div className="space-y-2">
             <label className="text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-2">
               <Globe size={14} />
-              pòlówó URL
+              Storefront URL
             </label>
             <div className={`flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-4 h-12 transition-all focus-within:border-white/20`}>
-              <span className="text-muted text-sm shrink-0 select-none">polowo.app/</span>
+              <span className="text-muted text-sm shrink-0 select-none">polowo.live/</span>
               <input
                 type="text"
                 value={slug}

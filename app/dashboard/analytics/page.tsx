@@ -54,7 +54,7 @@ export default function AnalyticsPage() {
             <div>
               <h1 className="text-2xl font-bold text-white uppercase tracking-tighter">Pro Analytics</h1>
               <p className="text-muted mt-3 text-sm leading-relaxed">
-                Unlock deep insights into your pòlówó's performance. Track visitor counts, 
+                Unlock deep insights into your store's performance. Track visitor counts, 
                 device distribution, and conversion funnels to scale your brand.
               </p>
             </div>
@@ -100,7 +100,7 @@ export default function AnalyticsPage() {
     <div className="space-y-8 animate-fade-in">
       <div>
         <h1 className="text-3xl font-bold text-white tracking-tight uppercase">Platform Analytics</h1>
-        <p className="text-muted mt-1 uppercase tracking-widest text-[10px] font-bold">Deep insights into your pòlówó performance.</p>
+        <p className="text-muted mt-1 uppercase tracking-widest text-[10px] font-bold">Deep insights into your storefront performance.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

@@ -18,7 +18,7 @@ export default function Hero() {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold leading-[1.1] tracking-tight"
             >
-              Create a personalized online pòlówó for{" "}
+              Create a personalized online store for{" "}
               <span className="text-red-200 underline decoration-white/20 underline-offset-8">
                 your products
               </span>{" "}
@@ -69,7 +69,7 @@ export default function Hero() {
               <div className="relative rounded-2xl overflow-hidden border border-white/10">
                 <Image
                   src="/hero.png"
-                  alt="Seller showcasing products on pòlówó"
+                  alt="Seller showcasing products on their online storefront"
                   width={600}
                   height={500}
                   className="w-full h-auto object-cover"
@@ -86,7 +86,7 @@ export default function Hero() {
                 <div className="rounded-xl overflow-hidden border border-white/10 shadow-2xl shadow-black/50">
                   <Image
                     src="/hero-illustration.png"
-                    alt="pòlówó illustration"
+                    alt="Online store illustration"
                     width={180}
                     height={180}
                     className="w-full h-auto"

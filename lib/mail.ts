@@ -2,7 +2,7 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY || "re_dummy_fallback");
 
-const FROM_EMAIL = process.env.FROM_EMAIL || "pòlówó <noreply@polowo.app>";
+const FROM_EMAIL = process.env.FROM_EMAIL || "pòlówó <noreply@polowo.live>";
 const EMAIL_ENABLED = process.env.ENABLE_EMAIL === "true";
 
 interface SendMailOptions {

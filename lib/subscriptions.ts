@@ -22,23 +22,23 @@ export async function checkAndNotifyExpiry(userId: string) {
 
     await sendMail({
       to: (brand as any).users.email,
-      subject: "Your pòlówó Trial has Expired",
+      subject: "Your Free Trial has Expired",
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
           <h1 style="color: #000; text-transform: uppercase; letter-spacing: -1px;">Trial Expired</h1>
           <p style="color: #666; font-size: 16px; line-height: 1.5;">
-            Hi ${brand.name}, your 7-day free trial on pòlówó has come to an end. 
-            Your public pòlówó is now restricted.
+            Hi ${brand.name}, your 7-day free trial has come to an end. 
+            Your public storefront is now restricted.
           </p>
           <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <p style="margin: 0; font-weight: bold;">Upgrade to Standard for ₦5,000/mo to:</p>
             <ul style="color: #666; margin-top: 10px;">
-              <li>Keep your pòlówó live</li>
+              <li>Keep your store live</li>
               <li>Unlock unlimited products</li>
               <li>Get your verification badge</li>
             </ul>
           </div>
-          <a href="https://polowo.app/dashboard/renew" style="display: inline-block; background: #000; color: #fff; text-decoration: none; padding: 14px 30px; border-radius: 6px; font-weight: bold; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Renew Now</a>
+          <a href="https://polowo.live/dashboard/renew" style="display: inline-block; background: #000; color: #fff; text-decoration: none; padding: 14px 30px; border-radius: 6px; font-weight: bold; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Renew Now</a>
         </div>
       `
     });
@@ -61,7 +61,7 @@ export async function checkAndNotifyExpiry(userId: string) {
               Your active subscription for <strong>${brand.name}</strong> has expired. 
               To avoid losing orders, please renew your plan immediately.
             </p>
-            <a href="https://polowo.app/dashboard/renew" style="display: inline-block; background: #000; color: #fff; text-decoration: none; padding: 14px 30px; border-radius: 6px; font-weight: bold;">Renew Subscription</a>
+            <a href="https://polowo.live/dashboard/renew" style="display: inline-block; background: #000; color: #fff; text-decoration: none; padding: 14px 30px; border-radius: 6px; font-weight: bold;">Renew Subscription</a>
           </div>
         `
       });

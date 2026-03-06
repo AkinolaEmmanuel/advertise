@@ -13,7 +13,7 @@ const plans = [
       "Everything in Trial",
       "Unlimited products",
       "WhatsApp ordering",
-      "Custom slug (polowo.app/you)",
+      "Custom slug (polowo.live/you)",
       "Mobile-optimized storefront",
     ],
     cta: "Start Free Trial",

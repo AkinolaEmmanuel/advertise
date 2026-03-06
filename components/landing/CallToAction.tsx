@@ -15,7 +15,7 @@ export default function CallToAction() {
           transition={{ duration: 0.5 }}
           className="text-3xl sm:text-4xl font-bold mb-4"
         >
-          Ready to build your pòlówó?
+          Ready to build your online store?
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 12 }}
