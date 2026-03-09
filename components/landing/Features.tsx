@@ -72,12 +72,13 @@ export default function Features() {
           </p>
         </motion.div>
 
+        {/* Desktop Grid */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-60px" }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-white/5 rounded-2xl overflow-hidden border border-white/5"
+          className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-px bg-white/5 rounded-2xl overflow-hidden border border-white/5"
         >
           {features.map((feature, i) => (
             <motion.div
@@ -85,14 +86,40 @@ export default function Features() {
               variants={itemVariants}
               className="bg-surface p-8 hover:bg-surface-hover transition-colors duration-300"
             >
-              <div className="w-10 h-10 rounded-lg border border-white/10 flex items-center justify-center text-white mb-5">
+              <div className="w-10 h-10 rounded-lg border border-white/10 flex items-center justify-center text-white mb-5 transition-transform group-hover:scale-110">
                 <feature.icon size={18} />
               </div>
-              <h3 className="font-semibold text-white text-base mb-2">{feature.title}</h3>
+              <h3 className="font-semibold text-white text-base mb-2 uppercase tracking-tight">{feature.title}</h3>
               <p className="text-muted text-sm leading-relaxed">{feature.desc}</p>
             </motion.div>
           ))}
         </motion.div>
+
+        {/* Mobile Carousel */}
+        <div className="md:hidden -mx-6 px-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory flex gap-4 pb-4">
+          {features.map((feature, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: i * 0.05 }}
+              className="bg-surface border border-white/5 rounded-2xl p-7 min-w-[260px] w-[80vw] snap-center shrink-0"
+            >
+              <div className="w-10 h-10 rounded-lg border border-white/10 flex items-center justify-center text-white mb-5">
+                <feature.icon size={18} />
+              </div>
+              <h3 className="font-semibold text-white text-base mb-2 uppercase tracking-tight">{feature.title}</h3>
+              <p className="text-muted text-sm leading-relaxed">{feature.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+        
+        <div className="md:hidden flex justify-center gap-1.5 mt-4">
+          {features.map((_, i) => (
+            <div key={i} className="w-1 h-1 rounded-full bg-white/20" />
+          ))}
+        </div>
       </div>
     </section>
   );

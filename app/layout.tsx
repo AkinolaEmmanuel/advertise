@@ -22,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} antialiased`}>
+      <body id="top" className={`${inter.variable} antialiased selection:bg-white selection:text-black`}>
         <QueryProvider>
           {children}
           <Toaster

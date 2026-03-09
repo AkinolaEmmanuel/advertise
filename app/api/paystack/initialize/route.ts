@@ -36,7 +36,7 @@ export async function POST(request: Request) {
         email: user.email!,
         amount: planConfig.amount,
         reference,
-        callback_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/paystack/verify?type=subscription`,
+        callback_url: `${process.env.NEXT_PUBLIC_APP_URL || "https://polowo.vercel.app"}/api/paystack/verify?type=subscription`,
         metadata: {
           brand_id: brand.id,
           plan,
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
         email: user.email!,
         amount: total,
         reference,
-        callback_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/paystack/verify?type=order`,
+        callback_url: `${process.env.NEXT_PUBLIC_APP_URL || "https://polowo.vercel.app"}/api/paystack/verify?type=order`,
         metadata: {
           brand_id: brandId,
           brand_name: brandName,

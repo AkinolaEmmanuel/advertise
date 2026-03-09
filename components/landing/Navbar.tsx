@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 
 const navLinks = [
-  { href: "/brands", label: "Explore", isExternal: true },
+  { href: "/brands", label: "Explore" },
   { href: "#features", label: "Features" },
   { href: "#how-it-works", label: "How it Works" },
   { href: "#pricing", label: "Pricing" },
@@ -14,6 +15,41 @@ const navLinks = [
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const scroll = params.get("scroll");
+    if (scroll && pathname === "/") {
+      const element = document.getElementById(scroll);
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: "smooth" });
+          const url = new URL(window.location.href);
+          url.searchParams.delete("scroll");
+          window.history.replaceState(null, "", url.pathname);
+        }, 100);
+      }
+    }
+  }, [pathname]);
+
+  const handleNavClick = (e: React.MouseEvent, href: string) => {
+    if (href.startsWith("#")) {
+      e.preventDefault();
+      const id = href.replace("#", "");
+      
+      if (pathname === "/") {
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      } else {
+        router.push(`/?scroll=${id}`);
+      }
+      setIsOpen(false);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 glass">
@@ -24,15 +60,14 @@ export default function Navbar() {
 
         <nav className="hidden md:flex items-center gap-8 text-sm text-muted">
           {navLinks.map((link) => (
-            link.isExternal ? (
-              <Link key={link.href} href={link.href} className="hover:text-white transition-colors">
-                {link.label}
-              </Link>
-            ) : (
-              <a key={link.href} href={link.href} className="hover:text-white transition-colors">
-                {link.label}
-              </a>
-            )
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={(e) => handleNavClick(e, link.href)}
+              className="hover:text-white transition-colors"
+            >
+              {link.label}
+            </Link>
           ))}
         </nav>
 
@@ -71,28 +106,14 @@ export default function Navbar() {
           >
             <nav className="flex flex-col px-6 py-4 gap-1">
               {navLinks.map((link) => (
-                link.isExternal ? (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className="py-3 text-sm text-muted hover:text-white transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                ) : (
-                  <motion.a
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className="py-3 text-sm text-muted hover:text-white transition-colors"
-                    initial={{ x: -12, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: 0.05 }}
-                  >
-                    {link.label}
-                  </motion.a>
-                )
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={(e) => handleNavClick(e, link.href)}
+                  className="py-3 text-sm text-muted hover:text-white transition-colors"
+                >
+                  {link.label}
+                </Link>
               ))}
               <div className="flex flex-col gap-3 pt-4 mt-2 border-t border-white/5">
                 <Link
@@ -117,3 +138,4 @@ export default function Navbar() {
     </header>
   );
 }
+

@@ -37,6 +37,19 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  if (user?.last_sign_in_at) {
+    const lastSignIn = new Date(user.last_sign_in_at).getTime();
+    const now = new Date().getTime();
+    const twoDaysInMs = 2 * 24 * 60 * 60 * 1000;
+    
+    if (now - lastSignIn > twoDaysInMs) {
+      await supabase.auth.signOut();
+      const logoutResponse = NextResponse.redirect(new URL("/login?error=session_expired", request.url));
+      // Clear cookies from the response by letting current setAll process if it happens
+      return logoutResponse;
+    }
+  }
+
   const { pathname } = request.nextUrl;
 
   // Protected routes check

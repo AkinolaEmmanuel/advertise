@@ -6,6 +6,7 @@ import { BadgeCheck, Search, ArrowRight, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
+import MobileTabBar from "@/components/landing/MobileTabBar";
 
 interface Brand {
   id: string;
@@ -47,7 +48,7 @@ export default function BrandsDirectory() {
       
       <main className="flex-1 max-w-7xl mx-auto px-6 py-20 w-full">
         <div className="space-y-4 mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tighter uppercase">Marketplace Directory</h1>
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tighter uppercase">pòlówó Marketplace</h1>
           <p className="text-muted max-w-2xl">
             Discover premium brands using our platform to power their online stores. 
             All brands listed here are active and verified by our team.
@@ -123,6 +124,7 @@ export default function BrandsDirectory() {
       </main>
 
       <Footer />
+      <MobileTabBar />
     </div>
   );
 }

@@ -8,10 +8,13 @@ import Testimonials from "@/components/landing/Testimonials";
 import Pricing from "@/components/landing/Pricing";
 import CallToAction from "@/components/landing/CallToAction";
 import Footer from "@/components/landing/Footer";
+import BackgroundEffects from "@/components/landing/BackgroundEffects";
+import MobileTabBar from "@/components/landing/MobileTabBar";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="relative min-h-screen bg-background text-foreground selection:bg-white selection:text-black overflow-x-hidden">
+      <BackgroundEffects />
       <Navbar />
       <Hero />
       <Features />
@@ -20,6 +23,7 @@ export default function LandingPage() {
       <Pricing />
       <CallToAction />
       <Footer />
+      <MobileTabBar />
     </div>
   );
 }

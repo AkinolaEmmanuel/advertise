@@ -43,7 +43,7 @@ export default function Hero() {
             >
               <Link
                 href="/signup"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white text-black font-semibold hover:bg-neutral-200 transition-all text-sm uppercase tracking-wider"
+                className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-4 rounded-xl bg-white text-black font-semibold hover:bg-neutral-200 transition-all text-sm uppercase tracking-wider"
               >
                 Start Free for 7 Days
                 <ArrowRight size={18} />
@@ -59,7 +59,7 @@ export default function Hero() {
       
           </div>
 
-          <div className="relative lg:pl-8">
+          <div className="relative p-3 lg:pl-8">
             <motion.div
               initial={{ opacity: 0, scale: 0.92 }}
               animate={{ opacity: 1, scale: 1 }}

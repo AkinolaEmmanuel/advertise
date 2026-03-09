@@ -164,7 +164,7 @@ export default function StorefrontShell({ brand, children }: StorefrontShellProp
         <footer className={`border-t py-12 mt-20 ${isDark ? "border-white/5" : "border-black/5"}`}>
           <p className="text-center text-xs text-muted uppercase tracking-widest font-medium">
             Powered by{" "}
-            <a href="/" className="text-foreground hover:opacity-70 transition-opacity font-bold">
+            <a href="/" className="hover:opacity-70 transition-opacity font-bold">
               pòlówó Marketplace
             </a>
           </p>
