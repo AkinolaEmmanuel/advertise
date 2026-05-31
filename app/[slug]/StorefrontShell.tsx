@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode, type CSSProperties } from "react";
+import Link from "next/link";
 import type { Brand } from "@/lib/types";
 import Cart from "@/components/storefront/Cart";
 import { useCartStore } from "@/stores/cart";
@@ -9,7 +10,7 @@ import { getInitials } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { StorefrontProvider, useStorefront } from "./StorefrontContext";
 import { logEvent } from "@/lib/analytics";
-import { useEffect } from "react";
+import { hasCheckoutContact } from "@/lib/checkout-contact";
 
 interface StorefrontShellProps {
   brand: Brand;
@@ -124,33 +125,30 @@ function StorefrontHeader({ brand }: { brand: Brand }) {
 
 export default function StorefrontShell({ brand, children }: StorefrontShellProps) {
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const itemCount = useCartStore((s) => s.getItemCount());
+  const setActiveBrand = useCartStore((s) => s.setActiveBrand);
 
-  // Listen for open-cart event
-  useState(() => {
-    if (typeof window !== 'undefined') {
-      const handler = () => setIsCartOpen(true);
-      window.addEventListener('open-cart', handler);
-      return () => window.removeEventListener('open-cart', handler);
-    }
-  });
+  useEffect(() => {
+    setActiveBrand(brand.id);
+  }, [brand.id, setActiveBrand]);
+
+  useEffect(() => {
+    const handler = () => setIsCartOpen(true);
+    window.addEventListener("open-cart", handler);
+    return () => window.removeEventListener("open-cart", handler);
+  }, []);
 
   const theme = brand.theme_settings || { theme: "light", primaryColor: "#000000", fontFamily: "Inter" };
   const isDark = theme.theme === "dark";
 
-  const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href);
-    toast.success("Link copied!");
-  };
+  const shellStyle = {
+    fontFamily: `"${theme.fontFamily}", sans-serif`,
+    "--primary-brand": theme.primaryColor,
+  } as CSSProperties;
 
   return (
     <div 
       className={`min-h-screen transition-colors duration-500 ${isDark ? "bg-black text-white" : "bg-neutral-50 text-black"}`}
-      style={{ 
-        fontFamily: `"${theme.fontFamily}", sans-serif`,
-        // @ts-ignore
-        "--primary-brand": theme.primaryColor 
-      }}
+      style={shellStyle}
     >
       <link rel="stylesheet" href={`https://fonts.googleapis.com/css2?family=${theme.fontFamily.replace(/\s+/g, '+')}:wght@400;500;600;700&display=swap`} />
 
@@ -164,9 +162,9 @@ export default function StorefrontShell({ brand, children }: StorefrontShellProp
         <footer className={`border-t py-12 mt-20 ${isDark ? "border-white/5" : "border-black/5"}`}>
           <p className="text-center text-xs text-muted uppercase tracking-widest font-medium">
             Powered by{" "}
-            <a href="/" className="hover:opacity-70 transition-opacity font-bold">
+            <Link href="/" className="hover:opacity-70 transition-opacity font-bold">
               pòlówó Marketplace
-            </a>
+            </Link>
           </p>
         </footer>
 
@@ -181,6 +179,7 @@ export default function StorefrontShell({ brand, children }: StorefrontShellProp
           bankName={brand.bank_name}
           accountNumber={brand.account_number}
           accountName={brand.account_name}
+          checkoutReady={hasCheckoutContact(brand)}
         />
       </StorefrontProvider>
     </div>

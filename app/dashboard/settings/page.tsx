@@ -6,33 +6,11 @@ import { createClient } from "@/lib/supabase/client";
 import Button from "@/components/ui/Button";
 import { Input, Textarea } from "@/components/ui/Input";
 import toast from "react-hot-toast";
-import { Upload, MessageCircle, Crown, Sparkles, Copy, Check, Palette, Moon, Landmark, Globe } from "lucide-react";
+import { Upload, MessageCircle, Sparkles, Check, Palette, Moon, Landmark, Globe } from "lucide-react";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
-
-const PAYMENT_ACCOUNT = {
-  bank: "Opay",
-  accountNumber: "7047548793",
-  accountName: "Emmanuel Akinola",
-  confirmWhatsApp: "2347047548793",
-};
-
-const PLANS = [
-  {
-    key: "standard",
-    name: "Standard",
-    price: "₦2,500",
-    amount: "₦2,500",
-    features: ["Unlimited products", "WhatsApp checkout", "Custom URL", "Mobile storefront"],
-  },
-  {
-    key: "pro",
-    name: "Pro",
-    price: "₦5,000",
-    amount: "₦5,000",
-    features: ["Everything in Standard", "Paystack payments", "Analytics dashboard", "Priority support"],
-  },
-];
+import { isReservedSlug } from "@/lib/slug";
+import { validateCheckoutContactInput } from "@/lib/checkout-contact";
+import { FREE_PLATFORM_FEATURES } from "@/lib/platform";
 
 export default function SettingsPage() {
   const { brand, setBrand } = useDashboard();
@@ -44,8 +22,6 @@ export default function SettingsPage() {
   const [logoUrl, setLogoUrl] = useState(brand.logo_url ?? "");
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
 
   // Bank Info states
   const [bankName, setBankName] = useState(brand.bank_name ?? "");
@@ -53,66 +29,9 @@ export default function SettingsPage() {
   const [accountName, setAccountName] = useState(brand.account_name ?? "");
   
   const [slug, setSlug] = useState(brand.slug);
-  const [slugError, setSlugError] = useState("");
-  const [isCheckingSlug, setIsCheckingSlug] = useState(false);
-
-  const RESERVED_SLUGS = [
-    "admin", "login", "signup", "dashboard", "api", "auth", "settings",
-    "products", "orders", "analytics", "preview", "explore", "brands",
-    "renew", "legal", "terms", "privacy", "help", "support"
-  ];
+  const [contactError, setContactError] = useState("");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const searchParams = useSearchParams();
-
-  useEffect(() => {
-    if (searchParams.get("payment") === "success") {
-      toast.success("Payment successful! Your plan has been upgraded.");
-      window.history.replaceState({}, "", "/dashboard/settings");
-    }
-  }, [searchParams]);
-
-  function getTrialDaysRemaining(): number {
-    if (!brand.trial_ends_at) return 0;
-    const diff = new Date(brand.trial_ends_at).getTime() - Date.now();
-    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
-  }
-
-  function handleCopyAccount() {
-    navigator.clipboard.writeText(PAYMENT_ACCOUNT.accountNumber);
-    setCopied(true);
-    toast.success("Account number copied!");
-    setTimeout(() => setCopied(false), 2000);
-  }
-
-  function handleSendReceipt(planKey: string) {
-    const plan = PLANS.find((p) => p.key === planKey);
-    if (!plan) return;
-
-    const message = encodeURIComponent(
-      `📋 *Subscription Payment*\n\n` +
-      `*Brand:* ${brand.name}\n` +
-      `*Plan:* ${plan.name} (${plan.amount}/month)\n\n` +
-      `I have made payment. Please confirm and activate my subscription.`
-    );
-
-    window.open(`https://wa.me/${PAYMENT_ACCOUNT.confirmWhatsApp}?text=${message}`, "_blank");
-  }
-
-  /* --- PAYSTACK UPGRADE (uncomment when ready) ---
-  async function handleUpgrade(planKey: string) {
-    try {
-      const res = await fetch("/api/paystack/initialize", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan: planKey, type: "subscription" }),
-      });
-      const result = await res.json();
-      if (!res.ok) { toast.error(result.error || "Failed to initiate payment"); return; }
-      window.location.href = result.authorization_url;
-    } catch { toast.error("Something went wrong"); }
-  }
-  --- END PAYSTACK --- */
 
   async function handleLogoUpload(file: File) {
     if (!file.type.startsWith("image/")) {
@@ -158,10 +77,18 @@ export default function SettingsPage() {
     }
 
     const cleanSlug = slug.toLowerCase().trim().replace(/[^\w\s-]/g, "").replace(/[\s_-]+/g, "-");
-    if (RESERVED_SLUGS.includes(cleanSlug)) {
+    if (isReservedSlug(cleanSlug)) {
       toast.error("This URL is reserved for platform use");
       return;
     }
+
+    const contactCheck = validateCheckoutContactInput(whatsapp, accountNumber);
+    if (!contactCheck.ok) {
+      setContactError(contactCheck.message);
+      toast.error(contactCheck.message);
+      return;
+    }
+    setContactError("");
 
     setIsLoading(true);
     const supabase = createClient();
@@ -210,8 +137,6 @@ export default function SettingsPage() {
 
     setIsLoading(false);
   }
-
-  const daysLeft = getTrialDaysRemaining();
 
   return (
     <div className="max-w-2xl space-y-12 animate-fade-in pb-20">
@@ -283,113 +208,23 @@ export default function SettingsPage() {
 
       <section className="space-y-4">
         <div className="flex items-center gap-2">
-          <Crown size={18} className="text-white" />
-          <h2 className="text-lg font-semibold text-foreground">Subscription</h2>
+          <Sparkles size={18} className="text-emerald-400" />
+          <h2 className="text-lg font-semibold text-foreground">Your plan</h2>
         </div>
 
-        <div className="bg-surface border border-white/5 rounded-2xl p-5">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <p className="font-semibold text-foreground capitalize">
-                {brand.subscription_status === "trial" ? "Free Trial" : brand.subscription_status}
-              </p>
-              {brand.subscription_status === "trial" && daysLeft > 0 && (
-                <p className="text-xs text-muted mt-0.5">
-                  {daysLeft} day{daysLeft !== 1 ? "s" : ""} remaining
-                </p>
-              )}
-              {brand.subscription_status === "trial" && daysLeft === 0 && (
-                <p className="text-xs text-danger mt-0.5">Trial expired</p>
-              )}
-              {brand.subscription_status === "active" && (
-                <p className="text-xs text-success mt-0.5">Active</p>
-              )}
-            </div>
-            {brand.subscription_status === "active" && (
-              <span className="text-xs bg-white/10 text-white px-2.5 py-1 rounded-full font-medium">
-                <Sparkles size={12} className="inline mr-1" />
-                Active
-              </span>
-            )}
-          </div>
-
-          {brand.subscription_status !== "active" && !selectedPlan && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {PLANS.map((plan) => (
-                <div
-                  key={plan.key}
-                  className="border border-white/10 rounded-xl p-4 hover:border-white/20 transition-colors"
-                >
-                  <h3 className="font-semibold text-white">{plan.name}</h3>
-                  <p className="text-lg font-bold text-white mt-1">
-                    {plan.price}<span className="text-xs text-muted font-normal">/month</span>
-                  </p>
-                  <ul className="mt-3 space-y-1.5">
-                    {plan.features.map((f, i) => (
-                      <li key={i} className="text-xs text-muted flex items-start gap-1.5">
-                        <span className="text-white mt-0.5">✓</span>
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                  <Button
-                    onClick={() => setSelectedPlan(plan.key)}
-                    className="w-full mt-4"
-                    size="sm"
-                  >
-                    Upgrade to {plan.name}
-                  </Button>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {selectedPlan && (
-            <div className="space-y-4">
-              <div className="text-center">
-                <p className="text-sm text-muted">
-                  Upgrading to <span className="text-white font-medium">{PLANS.find((p) => p.key === selectedPlan)?.name}</span>
-                </p>
-                <p className="text-2xl font-bold text-white mt-1">
-                  {PLANS.find((p) => p.key === selectedPlan)?.amount}
-                </p>
-              </div>
-
-              <div className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted uppercase tracking-wider">Bank</span>
-                  <span className="text-sm font-medium text-white">{PAYMENT_ACCOUNT.bank}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted uppercase tracking-wider">Account Name</span>
-                  <span className="text-sm font-medium text-white">{PAYMENT_ACCOUNT.accountName}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted uppercase tracking-wider">Account No.</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-white font-mono">{PAYMENT_ACCOUNT.accountNumber}</span>
-                    <button
-                      onClick={handleCopyAccount}
-                      className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
-                    >
-                      {copied ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <Button onClick={() => handleSendReceipt(selectedPlan)} className="w-full" size="lg">
-                <MessageCircle size={18} />
-                Send Receipt & Confirm
-              </Button>
-              <button
-                onClick={() => setSelectedPlan(null)}
-                className="text-xs text-muted hover:text-white transition-colors w-full text-center cursor-pointer"
-              >
-                ← Back to plans
-              </button>
-            </div>
-          )}
+        <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-5">
+          <p className="font-semibold text-white text-lg">Free forever</p>
+          <p className="text-sm text-muted mt-1">
+            pòlówó charges no monthly fee. Focus on selling — not subscriptions.
+          </p>
+          <ul className="mt-4 space-y-2">
+            {FREE_PLATFORM_FEATURES.map((feature) => (
+              <li key={feature} className="text-xs text-muted flex items-center gap-2">
+                <Check size={14} className="text-emerald-400 shrink-0" />
+                {feature}
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
@@ -479,15 +314,27 @@ export default function SettingsPage() {
               <MessageCircle size={18} />
               Checkout Channels
             </h2>
-            <p className="text-sm text-muted mt-1">Customers will use these to place orders via DM</p>
+            <p className="text-sm text-muted mt-1">
+              At least one is required: WhatsApp <span className="text-white/80">or</span> bank account number below
+            </p>
           </div>
+
+          {contactError && (
+            <p className="text-sm text-danger bg-danger/10 border border-danger/20 rounded-xl px-4 py-3">
+              {contactError}
+            </p>
+          )}
 
           <Input
             id="whatsapp"
             label="WhatsApp Number"
             placeholder="e.g. 2348012345678"
             value={whatsapp}
-            onChange={(e) => setWhatsapp(e.target.value)}
+            onChange={(e) => {
+              setWhatsapp(e.target.value);
+              if (contactError) setContactError("");
+            }}
+            inputMode="numeric"
           />
 
           <Input
@@ -513,7 +360,9 @@ export default function SettingsPage() {
               <Landmark size={18} />
               Payment Details
             </h2>
-            <p className="text-sm text-muted mt-1">Provide your bank account details for direct transfers from customers</p>
+            <p className="text-sm text-muted mt-1">
+              Account number counts toward checkout if WhatsApp is not set. Add bank name for transfer payments.
+            </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -529,7 +378,11 @@ export default function SettingsPage() {
               label="Account Number"
               placeholder="10-digit number"
               value={accountNumber}
-              onChange={(e) => setAccountNumber(e.target.value)}
+              onChange={(e) => {
+                setAccountNumber(e.target.value);
+                if (contactError) setContactError("");
+              }}
+              inputMode="numeric"
               maxLength={10}
             />
           </div>

@@ -1,3 +1,4 @@
+import { isAdminEmail } from "@/lib/admin";
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -11,8 +12,7 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const adminEmails = process.env.ADMIN_EMAILS?.split(",").map(e => e.trim()) || [];
-  if (!adminEmails.includes(user.email || "")) {
+  if (!isAdminEmail(user.email)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

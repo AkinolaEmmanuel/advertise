@@ -6,7 +6,9 @@ import { createClient } from "@/lib/supabase/client";
 import Sidebar from "@/components/dashboard/Sidebar";
 import MobileNav from "@/components/dashboard/MobileNav";
 import type { Brand } from "@/lib/types";
-import { Crown } from "lucide-react";
+import { hasCheckoutContact } from "@/lib/checkout-contact";
+import Link from "next/link";
+import { Crown, AlertCircle } from "lucide-react";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -31,8 +33,18 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
       if (data) {
         setBrand(data as Brand);
-        // Silently check for expiry/notifications
-        fetch("/api/user/check-status", { method: "POST" }).catch(() => {});
+        fetch("/api/user/check-status", { method: "POST" })
+          .then(() =>
+            supabase
+              .from("brands")
+              .select("*")
+              .eq("user_id", user.id)
+              .single()
+          )
+          .then(({ data: refreshed }) => {
+            if (refreshed) setBrand(refreshed as Brand);
+          })
+          .catch(() => {});
       }
 
       setLoading(false);
@@ -49,42 +61,64 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     );
   }
 
+  if (!brand) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6">
+        <div className="max-w-md text-center space-y-4">
+          <h1 className="text-xl font-bold text-white">Store not found</h1>
+          <p className="text-sm text-muted">
+            Your account is signed in, but no storefront is linked to it. Create a new store or contact support if this looks wrong.
+          </p>
+          <button
+            type="button"
+            onClick={() => router.push("/signup")}
+            className="px-6 py-2.5 rounded-xl bg-primary text-black text-xs font-bold hover:bg-primary-hover transition-colors cursor-pointer"
+          >
+            Create a store
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen">
       <Sidebar />
       <main className="flex-1 pb-20 lg:pb-0">
         <div className="p-4 lg:p-8 space-y-6">
-          {brand && brand.subscription_status === "trial" && (
-            <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 animate-fade-in">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                  <Crown size={20} />
-                </div>
+          {!hasCheckoutContact(brand) && (
+            <div className="bg-danger/10 border border-danger/20 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-fade-in">
+              <div className="flex items-start gap-3">
+                <AlertCircle size={20} className="text-danger shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="text-sm font-bold text-white">Trial Account</h4>
-                  <p className="text-xs text-muted">
-                    Upgrade to <strong>Standard</strong> to get unlimited products and custom themes.
+                  <h4 className="text-sm font-bold text-white">Checkout not set up</h4>
+                  <p className="text-xs text-muted mt-1">
+                    Add a WhatsApp number or bank account number in settings so customers can place orders.
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 w-full md:w-auto">
-                <div className="flex-1 md:flex-none text-center px-4 py-2 rounded-xl bg-white/5 border border-white/5 text-[10px] font-bold uppercase tracking-wider text-muted">
-                  {Math.max(0, Math.ceil((new Date(brand.trial_ends_at).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)))} days left
-                </div>
-                <button 
-                  onClick={() => router.push("/dashboard/settings")}
-                  className="flex-1 md:flex-none px-6 py-2 rounded-xl bg-primary text-black text-xs font-bold hover:bg-primary-hover transition-colors cursor-pointer"
-                >
-                  Upgrade Now
-                </button>
-              </div>
+              <Link
+                href="/dashboard/settings"
+                className="shrink-0 px-5 py-2 rounded-xl bg-white text-black text-xs font-bold hover:bg-neutral-200 transition-colors"
+              >
+                Complete setup
+              </Link>
             </div>
           )}
-          {brand && (
-            <DashboardContext.Provider value={{ brand, setBrand }}>
-              {children}
-            </DashboardContext.Provider>
-          )}
+          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4 flex items-start gap-3 animate-fade-in">
+            <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+              <Crown size={20} />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-white">Free forever on pòlówó</h4>
+              <p className="text-xs text-muted mt-1">
+                Your storefront, products, orders, and analytics are included at no cost — no subscription or trial limits.
+              </p>
+            </div>
+          </div>
+          <DashboardContext.Provider value={{ brand, setBrand }}>
+            {children}
+          </DashboardContext.Provider>
         </div>
       </main>
       <MobileNav />

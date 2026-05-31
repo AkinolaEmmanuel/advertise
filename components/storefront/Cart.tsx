@@ -3,16 +3,13 @@
 import { useState } from "react";
 import { useCartStore } from "@/stores/cart";
 import { formatPrice, buildWhatsAppUrl } from "@/lib/utils";
-import type { Brand } from "@/lib/types";
+import { canIncreaseQuantity } from "@/lib/stock";
 import Button from "@/components/ui/Button";
 import Image from "next/image";
 import { X, Minus, Plus, Trash2, MessageCircle, Copy, ShoppingBag, ArrowLeft, Check } from "lucide-react";
 import toast from "react-hot-toast";
-import { createClient } from "@/lib/supabase/client";
 import { logEvent } from "@/lib/analytics";
 
-// Hardcoded Admin Account for Platform Upgrades is handled in SettingsPage.
-// Storefront payments use the seller's specific account provided via props.
 interface CartProps {
   brandId: string;
   brandName: string;
@@ -24,19 +21,21 @@ interface CartProps {
   bankName?: string | null;
   accountNumber?: string | null;
   accountName?: string | null;
+  checkoutReady?: boolean;
 }
 
-export default function Cart({ 
-  brandId, 
-  brandName, 
-  whatsapp, 
-  isOpen, 
-  onClose, 
-  primaryColor, 
+export default function Cart({
+  brandId,
+  brandName,
+  whatsapp,
+  isOpen,
+  onClose,
+  primaryColor,
   isDark,
   bankName,
   accountNumber,
-  accountName
+  accountName,
+  checkoutReady = true,
 }: CartProps) {
   const { items, removeItem, updateQuantity, clearCart, getTotal } = useCartStore();
   const [showPayment, setShowPayment] = useState(false);
@@ -45,32 +44,50 @@ export default function Cart({
   const [customerPhone, setCustomerPhone] = useState("");
   const [isLogging, setIsLogging] = useState(false);
 
-  async function logOrder() {
+  function handleClose() {
+    setShowPayment(false);
+    onClose();
+  }
+
+  async function logOrder(): Promise<boolean> {
     if (!customerName.trim()) {
       toast.error("Please enter your name");
       return false;
     }
-    
+
+    if (items.length === 0) {
+      toast.error("Your bag is empty");
+      return false;
+    }
+
     setIsLogging(true);
     try {
-      const supabase = createClient();
-      const { error } = await supabase.from("orders").insert({
-        brand_id: brandId,
-        customer_name: customerName,
-        customer_phone: customerPhone,
-        total_amount: getTotal(),
-        items: items.map(item => ({
-          name: item.product.name,
-          quantity: item.quantity,
-          price: item.product.price
-        }))
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          brand_id: brandId,
+          customer_name: customerName.trim(),
+          customer_phone: customerPhone.trim() || null,
+          total_amount: getTotal(),
+          items: items.map((item) => ({
+            name: item.product.name,
+            quantity: item.quantity,
+            price: item.product.price,
+          })),
+        }),
       });
 
-      if (error) console.error("Order logging error:", error);
+      if (!res.ok) {
+        console.error("Order logging error:", await res.text());
+        toast.error("Could not save your order. Please try again.");
+        return false;
+      }
       return true;
     } catch (err) {
       console.error("Order logging failed:", err);
-      return true; // Still allow checkout even if logging fails
+      toast.error("Could not save your order. Please try again.");
+      return false;
     } finally {
       setIsLogging(false);
     }
@@ -89,13 +106,13 @@ export default function Cart({
 
     const url = buildWhatsAppUrl(whatsapp, brandName, cartItems, {
       name: customerName,
-      phone: customerPhone
+      phone: customerPhone,
     });
 
-    logEvent(brandId, 'whatsapp_click', undefined, { 
+    logEvent(brandId, "whatsapp_click", undefined, {
       total: getTotal(),
       customerName,
-      customerPhone
+      customerPhone,
     });
 
     window.open(url, "_blank");
@@ -110,36 +127,64 @@ export default function Cart({
   }
 
   async function handleSendReceipt() {
+    if (!whatsapp) {
+      toast.error("This store has no WhatsApp number for receipts. Message the seller another way.");
+      return;
+    }
+
     const ok = await logOrder();
     if (!ok) return;
 
     const orderSummary = items
-      .map((item) => `• ${item.product.name} x${item.quantity} — ${formatPrice(item.product.price * item.quantity)}`)
+      .map(
+        (item) =>
+          `• ${item.product.name} x${item.quantity} — ${formatPrice(item.product.price * item.quantity)}`
+      )
       .join("\n");
 
     const message = encodeURIComponent(
       `📋 *Payment Receipt*\n\n` +
-      `*Store:* ${brandName}\n` +
-      `*Customer:* ${customerName}\n` +
-      `*Items:*\n${orderSummary}\n\n` +
-      `*Total:* ${formatPrice(getTotal())}\n\n` +
-      `I have made payment. Please confirm.`
+        `*Store:* ${brandName}\n` +
+        `*Customer:* ${customerName}\n` +
+        `*Items:*\n${orderSummary}\n\n` +
+        `*Total:* ${formatPrice(getTotal())}\n\n` +
+        `I have made payment. Please confirm.`
     );
 
-    logEvent(brandId, 'transfer_click', undefined, {
-      type: 'receipt_send',
+    logEvent(brandId, "transfer_click", undefined, {
+      type: "receipt_send",
       total: getTotal(),
       customerName,
-      customerPhone
+      customerPhone,
     });
 
-    window.open(`https://wa.me/${whatsapp}?text=${message}`, "_blank");
+    const cleanPhone = whatsapp.replace(/\D/g, "");
+    window.open(`https://wa.me/${cleanPhone}?text=${message}`, "_blank");
   }
+
+  function handleIncreaseQuantity(productId: string, currentQty: number) {
+    const item = items.find((i) => i.product.id === productId);
+    if (!item) return;
+    if (!canIncreaseQuantity(item.product, currentQty)) {
+      toast.error("Maximum stock reached");
+      return;
+    }
+    if (!updateQuantity(productId, currentQty + 1)) {
+      toast.error("Maximum stock reached");
+    }
+  }
+
+  const canSendReceipt = Boolean(whatsapp);
+  const canTransfer = Boolean(accountNumber?.trim());
+  const canCheckout = checkoutReady && (Boolean(whatsapp) || canTransfer);
 
   return (
     <>
       {isOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 animate-fade-in" onClick={onClose} />
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 animate-fade-in"
+          onClick={handleClose}
+        />
       )}
 
       <div
@@ -147,8 +192,12 @@ export default function Cart({
           isOpen ? "translate-x-0" : "translate-x-full"
         } ${isDark ? "bg-[#0a0a0a] border-white/5" : "bg-white border-black/5"}`}
       >
-        <div className={`flex items-center justify-between px-6 py-5 border-b shrink-0 ${isDark ? "border-white/5" : "border-black/5"}`}>
-          <h2 className={`text-lg font-bold flex items-center gap-2 uppercase tracking-tight ${isDark ? "text-white" : "text-black"}`}>
+        <div
+          className={`flex items-center justify-between px-6 py-5 border-b shrink-0 ${isDark ? "border-white/5" : "border-black/5"}`}
+        >
+          <h2
+            className={`text-lg font-bold flex items-center gap-2 uppercase tracking-tight ${isDark ? "text-white" : "text-black"}`}
+          >
             {showPayment ? (
               <button
                 onClick={() => setShowPayment(false)}
@@ -161,11 +210,15 @@ export default function Cart({
             )}
             {showPayment ? "Transfer" : "My Bag"}
             {!showPayment && items.length > 0 && (
-              <span className={`text-[10px] px-2 py-0.5 rounded-full ${isDark ? "bg-white/10 text-white" : "bg-black/10 text-black"}`}>{items.length}</span>
+              <span
+                className={`text-[10px] px-2 py-0.5 rounded-full ${isDark ? "bg-white/10 text-white" : "bg-black/10 text-black"}`}
+              >
+                {items.length}
+              </span>
             )}
           </h2>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className={`p-2 rounded-lg transition-colors cursor-pointer ${isDark ? "text-muted hover:text-white hover:bg-white/5" : "text-muted hover:text-black hover:bg-black/5"}`}
           >
             <X size={20} />
@@ -176,14 +229,22 @@ export default function Cart({
           <div className="flex-1 flex flex-col px-6 py-6 overflow-y-auto">
             <div className="space-y-6 flex-1">
               <div className="text-center">
-                <p className={`text-3xl font-bold ${isDark ? "text-white" : "text-black"}`}>{formatPrice(getTotal())}</p>
-                <p className="text-xs text-muted mt-1 uppercase tracking-widest font-bold">Transfer Exact Amount</p>
+                <p className={`text-3xl font-bold ${isDark ? "text-white" : "text-black"}`}>
+                  {formatPrice(getTotal())}
+                </p>
+                <p className="text-xs text-muted mt-1 uppercase tracking-widest font-bold">
+                  Transfer Exact Amount
+                </p>
               </div>
 
-              <div className={`border rounded-2xl p-5 space-y-4 shadow-sm ${isDark ? "bg-white/5 border-white/5" : "bg-black/[0.02] border-black/5"}`}>
+              <div
+                className={`border rounded-2xl p-5 space-y-4 shadow-sm ${isDark ? "bg-white/5 border-white/5" : "bg-black/[0.02] border-black/5"}`}
+              >
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] text-muted uppercase tracking-wider font-bold">Bank</span>
-                  <span className={`text-sm font-bold ${isDark ? "text-white" : "text-black"}`}>{bankName}</span>
+                  <span className={`text-sm font-bold ${isDark ? "text-white" : "text-black"}`}>
+                    {bankName || "—"}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] text-muted uppercase tracking-wider font-bold">Account Name</span>
@@ -192,60 +253,87 @@ export default function Cart({
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] text-muted uppercase tracking-wider font-bold">Account Number</span>
                   <div className="flex items-center gap-2">
-                    <span className={`text-sm font-bold font-mono ${isDark ? "text-white" : "text-black"}`}>{accountNumber}</span>
+                    <span className={`text-sm font-bold font-mono ${isDark ? "text-white" : "text-black"}`}>
+                      {accountNumber}
+                    </span>
                     <button
                       onClick={handleCopyAccount}
                       className={`p-2 rounded-lg transition-colors cursor-pointer ${isDark ? "bg-white/5 hover:bg-white/10" : "bg-black/5 hover:bg-black/10"}`}
                     >
-                      {copied ? <Check size={14} className="text-green-400" /> : <Copy size={14} className={isDark ? "text-white" : "text-black"} />}
+                      {copied ? (
+                        <Check size={14} className="text-green-400" />
+                      ) : (
+                        <Copy size={14} className={isDark ? "text-white" : "text-black"} />
+                      )}
                     </button>
                   </div>
                 </div>
               </div>
 
-              <div className={`border rounded-2xl p-5 ${isDark ? "bg-white/5 border-white/5" : "bg-black/[0.02] border-black/5"}`}>
+              <div
+                className={`border rounded-2xl p-5 ${isDark ? "bg-white/5 border-white/5" : "bg-black/[0.02] border-black/5"}`}
+              >
                 <p className="text-[10px] text-muted mb-3 uppercase tracking-widest font-bold">Order Details</p>
                 {items.map((item) => (
                   <div key={item.product.id} className="flex items-center justify-between py-1.5">
                     <span className={`text-sm truncate flex-1 ${isDark ? "text-white" : "text-black"}`}>
-                      {item.product.name} <span className="text-muted text-xs">×{item.quantity}</span>
+                      {item.product.name}{" "}
+                      <span className="text-muted text-xs">×{item.quantity}</span>
                     </span>
                     <span className={`text-sm font-bold ml-2 ${isDark ? "text-white" : "text-black"}`}>
                       {formatPrice(item.product.price * item.quantity)}
                     </span>
                   </div>
                 ))}
-                <div className={`border-t mt-3 pt-3 flex items-center justify-between ${isDark ? "border-white/5" : "border-black/5"}`}>
-                  <span className={`text-sm font-bold uppercase ${isDark ? "text-white/60" : "text-black/60"}`}>Total</span>
-                  <span className={`text-lg font-bold ${isDark ? "text-white" : "text-black"}`}>{formatPrice(getTotal())}</span>
+                <div
+                  className={`border-t mt-3 pt-3 flex items-center justify-between ${isDark ? "border-white/5" : "border-black/5"}`}
+                >
+                  <span className={`text-sm font-bold uppercase ${isDark ? "text-white/60" : "text-black/60"}`}>
+                    Total
+                  </span>
+                  <span className={`text-lg font-bold ${isDark ? "text-white" : "text-black"}`}>
+                    {formatPrice(getTotal())}
+                  </span>
                 </div>
               </div>
             </div>
 
             <div className="space-y-2 pt-4">
-              <Button onClick={handleSendReceipt} className="w-full" size="lg">
-                <MessageCircle size={18} />
-                Send Receipt & Confirm
-              </Button>
+              {canSendReceipt ? (
+                <Button onClick={handleSendReceipt} className="w-full" size="lg" isLoading={isLogging}>
+                  <MessageCircle size={18} />
+                  Send Receipt & Confirm
+                </Button>
+              ) : (
+                <p className="text-xs text-muted text-center">
+                  Add a WhatsApp number in store settings to send payment receipts.
+                </p>
+              )}
               <p className="text-[10px] text-muted text-center">
-                After transferring, tap above to send your receipt via WhatsApp
+                After transferring, send your receipt to confirm the order
               </p>
             </div>
           </div>
         ) : items.length === 0 ? (
           <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
-            <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 ${isDark ? "bg-white/5" : "bg-black/5"}`}>
+            <div
+              className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 ${isDark ? "bg-white/5" : "bg-black/5"}`}
+            >
               <ShoppingBag size={32} className="text-muted" />
             </div>
             <h3 className={`font-bold text-xl mb-2 ${isDark ? "text-white" : "text-black"}`}>Your bag is empty</h3>
-            <p className="text-sm text-muted max-w-[200px] leading-relaxed">Browse the pòlówó and add items you love</p>
+            <p className="text-sm text-muted max-w-[200px] leading-relaxed">
+              Browse the pòlówó and add items you love
+            </p>
           </div>
         ) : (
           <>
             <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
               {items.map((item) => (
                 <div key={item.product.id} className="flex gap-4 animate-fade-in group">
-                  <div className={`relative w-20 h-20 rounded-2xl overflow-hidden shrink-0 border ${isDark ? "bg-white/5 border-white/5" : "bg-black/5 border-black/5"}`}>
+                  <div
+                    className={`relative w-20 h-20 rounded-2xl overflow-hidden shrink-0 border ${isDark ? "bg-white/5 border-white/5" : "bg-black/5 border-black/5"}`}
+                  >
                     {item.product.image_url ? (
                       <Image
                         src={item.product.image_url}
@@ -262,8 +350,12 @@ export default function Cart({
                   </div>
 
                   <div className="flex-1 min-w-0 py-1">
-                    <h4 className={`text-sm font-bold truncate ${isDark ? "text-white/80" : "text-black/80"}`}>{item.product.name}</h4>
-                    <p className={`text-base font-bold mt-0.5 ${isDark ? "text-white" : "text-black"}`}>{formatPrice(item.product.price)}</p>
+                    <h4 className={`text-sm font-bold truncate ${isDark ? "text-white/80" : "text-black/80"}`}>
+                      {item.product.name}
+                    </h4>
+                    <p className={`text-base font-bold mt-0.5 ${isDark ? "text-white" : "text-black"}`}>
+                      {formatPrice(item.product.price)}
+                    </p>
                     <div className="flex items-center gap-2 mt-2">
                       <button
                         onClick={() =>
@@ -275,9 +367,11 @@ export default function Cart({
                       >
                         <Minus size={14} className={isDark ? "text-white" : "text-black"} />
                       </button>
-                      <span className={`text-sm font-bold w-6 text-center ${isDark ? "text-white" : "text-black"}`}>{item.quantity}</span>
+                      <span className={`text-sm font-bold w-6 text-center ${isDark ? "text-white" : "text-black"}`}>
+                        {item.quantity}
+                      </span>
                       <button
-                        onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                        onClick={() => handleIncreaseQuantity(item.product.id, item.quantity)}
                         className={`p-1 rounded-lg transition-colors cursor-pointer ${isDark ? "bg-white/5 hover:bg-white/10" : "bg-black/5 hover:bg-black/10"}`}
                       >
                         <Plus size={14} className={isDark ? "text-white" : "text-black"} />
@@ -295,7 +389,9 @@ export default function Cart({
               ))}
             </div>
 
-            <div className={`border-t px-6 py-8 space-y-6 shrink-0 ${isDark ? "bg-black/20 border-white/5" : "bg-neutral-50 border-black/5"}`}>
+            <div
+              className={`border-t px-6 py-8 space-y-6 shrink-0 ${isDark ? "bg-black/20 border-white/5" : "bg-neutral-50 border-black/5"}`}
+            >
               <div className="space-y-4">
                 <p className="text-[10px] font-bold text-muted uppercase tracking-widest">Billing Info</p>
                 <div className="space-y-3">
@@ -305,7 +401,9 @@ export default function Cart({
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     className={`w-full border rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-1 transition-all ${
-                        isDark ? "bg-white/5 border-white/5 text-white focus:ring-white/20" : "bg-white border-black/5 text-black focus:ring-black/10 shadow-sm"
+                      isDark
+                        ? "bg-white/5 border-white/5 text-white focus:ring-white/20"
+                        : "bg-white border-black/5 text-black focus:ring-black/10 shadow-sm"
                     }`}
                   />
                   <input
@@ -314,23 +412,32 @@ export default function Cart({
                     value={customerPhone}
                     onChange={(e) => setCustomerPhone(e.target.value)}
                     className={`w-full border rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-1 transition-all ${
-                        isDark ? "bg-white/5 border-white/5 text-white focus:ring-white/20" : "bg-white border-black/5 text-black focus:ring-black/10 shadow-sm"
+                      isDark
+                        ? "bg-white/5 border-white/5 text-white focus:ring-white/20"
+                        : "bg-white border-black/5 text-black focus:ring-black/10 shadow-sm"
                     }`}
                   />
                 </div>
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-muted font-bold text-xs uppercase tracking-wider text-muted">Subtotal</span>
-                <span className={`text-2xl font-bold tracking-tight ${isDark ? "text-white" : "text-black"}`}>{formatPrice(getTotal())}</span>
+                <span className="text-muted font-bold text-xs uppercase tracking-wider">Subtotal</span>
+                <span className={`text-2xl font-bold tracking-tight ${isDark ? "text-white" : "text-black"}`}>
+                  {formatPrice(getTotal())}
+                </span>
               </div>
 
               <div className="space-y-3 pt-2">
-                {whatsapp && (
-                  <Button 
-                    onClick={handleWhatsAppCheckout} 
-                    className="w-full h-14 text-black font-black uppercase tracking-widest text-xs rounded-2xl shadow-2xl transition-transform active:scale-95" 
-                    style={{ backgroundColor: primaryColor || '#ffffff' }}
+                {!canCheckout && (
+                  <p className="text-xs text-center text-muted px-2 py-3 rounded-xl border border-white/10 bg-white/5">
+                    This store has not finished checkout setup yet. Please contact the seller directly.
+                  </p>
+                )}
+                {canCheckout && whatsapp && (
+                  <Button
+                    onClick={handleWhatsAppCheckout}
+                    className="w-full h-14 text-black font-black uppercase tracking-widest text-xs rounded-2xl shadow-2xl transition-transform active:scale-95"
+                    style={{ backgroundColor: primaryColor || "#ffffff" }}
                     isLoading={isLogging}
                   >
                     <MessageCircle size={20} />
@@ -338,19 +445,21 @@ export default function Cart({
                   </Button>
                 )}
 
-                {bankName && accountNumber && (
+                {canCheckout && canTransfer && (
                   <Button
                     variant="secondary"
                     className={`w-full h-14 border font-black uppercase tracking-widest text-[10px] rounded-2xl transition-all shadow-sm ${
-                        isDark ? "bg-white/5 border-white/5 text-white hover:bg-white/10" : "bg-white border-black/5 text-black hover:bg-neutral-50 shadow-sm"
+                      isDark
+                        ? "bg-white/5 border-white/5 text-white hover:bg-white/10"
+                        : "bg-white border-black/5 text-black hover:bg-neutral-50 shadow-sm"
                     }`}
                     onClick={() => {
                       setShowPayment(true);
-                      logEvent(brandId, 'transfer_click', undefined, { 
-                        type: 'view_details',
+                      logEvent(brandId, "transfer_click", undefined, {
+                        type: "view_details",
                         total: getTotal(),
                         customerName,
-                        customerPhone
+                        customerPhone,
                       });
                     }}
                   >

@@ -21,8 +21,11 @@ function LoginContent() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (searchParams.get("error") === "session_expired") {
+    const error = searchParams.get("error");
+    if (error === "session_expired") {
       toast.error("Your session has expired. Please sign in again.");
+    } else if (error === "config") {
+      toast.error("App configuration is incomplete. Contact support.");
     }
   }, [searchParams]);
 
@@ -48,15 +51,16 @@ function LoginContent() {
       }
 
       toast.success("Welcome back!");
-      
-      // Check if user is an admin
-      const adminEmails = process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(",") || ["akinola@gmail.com", "admin@polowo.live"];
-      if (adminEmails.includes(data.user.email || "")) {
-        router.push("/admin");
-      } else {
-        router.push("/dashboard");
-      }
-      
+
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData.session?.access_token;
+      const targetRes = await fetch("/api/auth/post-login", {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      const target = targetRes.ok
+        ? ((await targetRes.json()) as { redirect?: string }).redirect
+        : "/dashboard";
+      router.push(target || "/dashboard");
       router.refresh();
     } catch {
       toast.error("Something went wrong. Please try again.");

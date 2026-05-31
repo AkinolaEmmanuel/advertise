@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
+import Link from "next/link";
+import type { Product } from "@/lib/types";
 import StorefrontContent from "./StorefrontContent";
 
 interface Props {
@@ -18,25 +20,22 @@ export default async function StorefrontPage({ params }: Props) {
 
   if (!brand) notFound();
 
-  // Block access to flagged or expired storefronts
-  const isExpired = brand.subscription_status === "expired" || brand.subscription_status === "cancelled";
-  if (brand.is_flagged || isExpired) {
+  if (brand.is_flagged) {
     return (
       <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-center">
         <h1 className="text-4xl font-bold text-white mb-4">pòlówó Unavailable</h1>
         <p className="text-muted max-w-md">
-          {brand.is_flagged 
-            ? "This account has been suspended by the platform administrators."
-            : "This pòlówó has expired. If you are the owner, please renew your subscription."}
+          This account has been suspended by the platform administrators.
         </p>
-        <a href="/" className="mt-8 text-primary font-medium hover:underline">← Back to pòlówó</a>
+        <Link href="/" className="mt-8 text-primary font-medium hover:underline">← Back to pòlówó</Link>
       </div>
     );
   }
 
-  const activeProducts = (brand.products || [])
-    .filter((p: any) => p.is_active)
-    .sort((a: any, b: any) => a.sort_order - b.sort_order);
+  const products = (brand.products || []) as Product[];
+  const activeProducts = products
+    .filter((p) => p.is_active)
+    .sort((a, b) => a.sort_order - b.sort_order);
 
   return <StorefrontContent brand={brand} products={activeProducts} />;
 }

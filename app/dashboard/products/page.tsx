@@ -18,7 +18,7 @@ export default function ProductsPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
-  const fetchProducts = useCallback(async () => {
+  const loadProducts = useCallback(async () => {
     const supabase = createClient();
     const { data } = await supabase
       .from("products")
@@ -31,8 +31,8 @@ export default function ProductsPage() {
   }, [brand.id]);
 
   useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+    loadProducts();
+  }, [loadProducts]);
 
   async function handleToggle(id: string, isActive: boolean) {
     const supabase = createClient();
@@ -74,7 +74,7 @@ export default function ProductsPage() {
   function handleFormSuccess() {
     setIsFormOpen(false);
     setEditingProduct(null);
-    fetchProducts();
+    loadProducts();
   }
 
   return (

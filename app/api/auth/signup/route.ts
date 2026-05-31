@@ -1,16 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-
-function generateSlug(name: string): string {
-  return name
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .slice(0, 60);
-}
-
+import { generateSlug, isReservedSlug } from "@/lib/slug";
 import { z } from "zod";
 
 const signupSchema = z.object({
@@ -59,23 +49,44 @@ export async function POST(request: Request) {
       );
     }
 
-    let slug = generateSlug(brandName);
-    const reservedSlugs = ["admin", "login", "signup", "dashboard", "api", "auth", "static", "public"];
+    const slug = generateSlug(brandName);
+
+    if (!slug) {
+      await supabase.auth.admin.deleteUser(authData.user.id);
+      return NextResponse.json(
+        { error: "Please choose a valid store name." },
+        { status: 400 }
+      );
+    }
+
+    if (isReservedSlug(slug)) {
+      await supabase.auth.admin.deleteUser(authData.user.id);
+      return NextResponse.json(
+        { error: "This store name is reserved. Please choose another." },
+        { status: 400 }
+      );
+    }
 
     const { data: existingSlug } = await supabase
       .from("brands")
       .select("id")
       .eq("slug", slug)
-      .limit(1);
+      .maybeSingle();
 
-    if ((existingSlug && existingSlug.length > 0) || reservedSlugs.includes(slug)) {
-      slug = `${slug}-${Date.now().toString(36)}`;
+    if (existingSlug) {
+      await supabase.auth.admin.deleteUser(authData.user.id);
+      return NextResponse.json(
+        { error: "This store URL is already taken. Try a different name." },
+        { status: 409 }
+      );
     }
 
     const { error: brandError } = await supabase.from("brands").insert({
       user_id: authData.user.id,
       name: brandName.trim(),
       slug,
+      subscription_status: "active",
+      plan_type: "free",
     });
 
     if (brandError) {
@@ -87,7 +98,7 @@ export async function POST(request: Request) {
       );
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, slug });
   } catch (error) {
     console.error("Signup error:", error);
     return NextResponse.json(

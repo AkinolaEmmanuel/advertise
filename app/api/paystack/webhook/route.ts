@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  activateBrandSubscription,
+  expireBrandSubscription,
+  type PaidPlan,
+} from "@/lib/subscription-activation";
 import crypto from "crypto";
 
 export async function POST(request: Request) {
@@ -17,20 +22,16 @@ export async function POST(request: Request) {
     }
 
     const event = JSON.parse(body);
+    const supabase = createAdminClient();
 
     if (event.event === "charge.success") {
       const { metadata, customer } = event.data;
 
-      if (metadata?.type === "subscription" && metadata?.brand_id) {
-        const supabase = createAdminClient();
-
-        await supabase
-          .from("brands")
-          .update({
-            subscription_status: "active",
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", metadata.brand_id);
+      if (metadata?.type === "subscription" && metadata?.brand_id && metadata?.plan) {
+        const plan = metadata.plan as PaidPlan;
+        if (plan === "standard" || plan === "pro") {
+          await activateBrandSubscription(supabase, metadata.brand_id, plan);
+        }
 
         console.log(
           `[Webhook] Subscription activated for brand ${metadata.brand_id}, customer ${customer.email}`
@@ -45,15 +46,34 @@ export async function POST(request: Request) {
     }
 
     if (event.event === "subscription.disable") {
-      const { subscription_code, customer } = event.data;
-      console.log(
-        `[Webhook] Subscription disabled: ${subscription_code}, customer ${customer.email}`
-      );
+      let brandId = event.data?.metadata?.brand_id as string | undefined;
+      const customerEmail = event.data?.customer?.email as string | undefined;
+
+      if (!brandId && customerEmail) {
+        const { data: usersData } = await supabase.auth.admin.listUsers({
+          page: 1,
+          perPage: 1000,
+        });
+        const authUser = usersData?.users?.find((u) => u.email === customerEmail);
+        if (authUser) {
+          const { data: brand } = await supabase
+            .from("brands")
+            .select("id")
+            .eq("user_id", authUser.id)
+            .maybeSingle();
+          brandId = brand?.id;
+        }
+      }
+
+      if (brandId) {
+        await expireBrandSubscription(supabase, brandId);
+        console.log(`[Webhook] Subscription disabled for brand ${brandId}`);
+      }
     }
 
     return NextResponse.json({ received: true });
   } catch (error) {
     console.error("Webhook error:", error);
-    return NextResponse.json({ received: true });
+    return NextResponse.json({ error: "Webhook processing failed" }, { status: 500 });
   }
 }

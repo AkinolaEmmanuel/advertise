@@ -1,3 +1,5 @@
+import { getAppUrl } from "@/lib/env";
+import { PLATFORM_IS_FREE } from "@/lib/platform";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { initializeTransaction, PLANS } from "@/lib/paystack";
@@ -16,6 +18,13 @@ export async function POST(request: Request) {
     const { plan, type } = await request.json();
 
     if (type === "subscription") {
+      if (PLATFORM_IS_FREE) {
+        return NextResponse.json(
+          { error: "Platform subscriptions are not enabled" },
+          { status: 403 }
+        );
+      }
+
       const planConfig = PLANS[plan as keyof typeof PLANS];
       if (!planConfig) {
         return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
@@ -36,7 +45,7 @@ export async function POST(request: Request) {
         email: user.email!,
         amount: planConfig.amount,
         reference,
-        callback_url: `${process.env.NEXT_PUBLIC_APP_URL || "https://polowo.vercel.app"}/api/paystack/verify?type=subscription`,
+        callback_url: `${getAppUrl()}/api/paystack/verify?type=subscription`,
         metadata: {
           brand_id: brand.id,
           plan,
@@ -68,7 +77,7 @@ export async function POST(request: Request) {
         email: user.email!,
         amount: total,
         reference,
-        callback_url: `${process.env.NEXT_PUBLIC_APP_URL || "https://polowo.vercel.app"}/api/paystack/verify?type=order`,
+        callback_url: `${getAppUrl()}/api/paystack/verify?type=order`,
         metadata: {
           brand_id: brandId,
           brand_name: brandName,

@@ -1,11 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-
-const RESERVED_SLUGS = [
-  "admin", "login", "signup", "dashboard", "api", "auth", "settings",
-  "products", "orders", "analytics", "preview", "explore", "brands",
-  "renew", "legal", "terms", "privacy", "help", "support"
-];
+import { generateSlug, isReservedSlug } from "@/lib/slug";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -15,15 +10,13 @@ export async function GET(request: Request) {
     return NextResponse.json({ available: false, error: "Too short" });
   }
 
-  const slug = brandName
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/[\s_-]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 60);
+  const slug = generateSlug(brandName);
 
-  if (RESERVED_SLUGS.includes(slug)) {
+  if (!slug) {
+    return NextResponse.json({ available: false, error: "Invalid name" });
+  }
+
+  if (isReservedSlug(slug)) {
     return NextResponse.json({ available: false, error: "Reserved name" });
   }
 

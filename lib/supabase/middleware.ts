@@ -1,20 +1,32 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { isSupabaseConfigured } from "@/lib/env";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const { pathname } = request.nextUrl;
+  const isProtectedRoute =
+    pathname.startsWith("/dashboard") || pathname.startsWith("/admin");
 
-  if (!url || !key) {
-    console.error("Missing Supabase environment variables: NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY");
+  if (!isSupabaseConfigured()) {
+    console.error(
+      "Missing Supabase environment variables: NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY"
+    );
+    if (isProtectedRoute) {
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = "/login";
+      loginUrl.searchParams.set("error", "config");
+      return NextResponse.redirect(loginUrl);
+    }
     return supabaseResponse;
   }
 
   const supabase = createServerClient(
-    url,
-    key,
+    url!,
+    key!,
     {
       cookies: {
         getAll() {
@@ -50,11 +62,6 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
-  const { pathname } = request.nextUrl;
-
-  // Protected routes check
-  const isProtectedRoute = pathname.startsWith("/dashboard") || pathname.startsWith("/admin");
-
   if (!user && isProtectedRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
@@ -79,12 +86,7 @@ export async function updateSession(request: NextRequest) {
           return NextResponse.redirect(url);
         }
 
-        const isExpired = brand.subscription_status === "expired" || brand.subscription_status === "cancelled";
-        if (isExpired && pathname !== "/dashboard/renew" && pathname !== "/dashboard/settings") {
-          const url = request.nextUrl.clone();
-          url.pathname = "/dashboard/renew";
-          return NextResponse.redirect(url);
-        }
+        // Platform is free — do not lock merchants out for subscription status
       }
     }
   }

@@ -49,7 +49,7 @@ export default function ProductGrid({ products, onProductClick, primaryColor, is
         </div>
         <h3 className={`text-lg font-bold mb-1 ${isDark ? "text-white" : "text-black"}`}>No results found</h3>
         <p className="text-muted text-sm flex items-center gap-1">
-          No matches for <span className="text-white font-medium italic">"{searchQuery}"</span>
+          No matches for <span className="text-white font-medium italic">&ldquo;{searchQuery}&rdquo;</span>
         </p>
       </div>
     );

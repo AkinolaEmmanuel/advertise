@@ -1,6 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { verifyTransaction } from "@/lib/paystack";
 import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  activateBrandSubscription,
+  type PaidPlan,
+} from "@/lib/subscription-activation";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -31,16 +35,12 @@ export async function GET(request: NextRequest) {
       type?: string;
     };
 
-    if (type === "subscription" && metadata.brand_id) {
-      const supabase = createAdminClient();
-
-      await supabase
-        .from("brands")
-        .update({
-          subscription_status: "active",
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", metadata.brand_id);
+    if (type === "subscription" && metadata.brand_id && metadata.plan) {
+      const plan = metadata.plan as PaidPlan;
+      if (plan === "standard" || plan === "pro") {
+        const supabase = createAdminClient();
+        await activateBrandSubscription(supabase, metadata.brand_id, plan);
+      }
 
       return NextResponse.redirect(
         new URL("/dashboard/settings?payment=success", request.url)

@@ -125,9 +125,7 @@ CREATE POLICY "Users can delete own product images"
 -- Enable RLS for Orders
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Anyone can insert orders"
-  ON orders FOR INSERT
-  WITH CHECK (true);
+-- Orders are created via POST /api/orders (service role), not direct client inserts
 
 CREATE POLICY "Sellers can view own orders"
   ON orders FOR SELECT
@@ -153,9 +151,7 @@ CREATE INDEX idx_analytics_created_at ON analytic_events(created_at);
 
 ALTER TABLE analytic_events ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Anyone can insert analytic events"
-  ON analytic_events FOR INSERT
-  WITH CHECK (true);
+-- Analytics events are created via POST /api/analytics/event (service role)
 
 CREATE POLICY "Sellers can view own analytics"
   ON analytic_events FOR SELECT

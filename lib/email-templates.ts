@@ -1,3 +1,5 @@
+import { getAppUrl } from "./env";
+
 export function welcomeEmail(brandName: string) {
   return {
     subject: `Welcome to pòlówó, ${brandName}!`,
@@ -41,7 +43,7 @@ export function welcomeEmail(brandName: string) {
                   </td>
                 </tr>
               </table>
-              <a href="${process.env.NEXT_PUBLIC_APP_URL || "https://polowo.live"}/dashboard"
+              <a href="${getAppUrl()}/dashboard"
                 style="display:inline-block;padding:12px 28px;background:#fff;color:#000;font-size:14px;font-weight:600;text-decoration:none;border-radius:8px;">
                 Go to Dashboard
               </a>
@@ -50,7 +52,7 @@ export function welcomeEmail(brandName: string) {
           <tr>
             <td style="padding:20px 32px;border-top:1px solid #1f1f1f;">
               <p style="margin:0;font-size:12px;color:#525252;">
-                You're receiving this because you signed up for pòlówó. Your 30-day free trial has started.
+                You're receiving this because you signed up for pòlówó. Your store is free to use — no subscription required.
               </p>
             </td>
           </tr>
@@ -153,7 +155,7 @@ export function orderNotificationEmail(
                   <td style="padding:12px 0;color:#fff;font-size:15px;font-weight:700;text-align:right;">${total}</td>
                 </tr>
               </table>
-              <a href="${process.env.NEXT_PUBLIC_APP_URL || "https://polowo.live"}/dashboard"
+              <a href="${getAppUrl()}/dashboard"
                 style="display:inline-block;padding:12px 28px;background:#fff;color:#000;font-size:14px;font-weight:600;text-decoration:none;border-radius:8px;">
                 View Dashboard
               </a>

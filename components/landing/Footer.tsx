@@ -9,7 +9,7 @@ export default function Footer() {
           <nav className="flex items-center gap-6 text-sm text-muted">
             <a href="#features" className="hover:text-white transition-colors">Features</a>
             <a href="#how-it-works" className="hover:text-white transition-colors">How it Works</a>
-            <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
+            <a href="#pricing" className="hover:text-white transition-colors">Free forever</a>
             <Link href="/login" className="hover:text-white transition-colors">Sign In</Link>
           </nav>
         </div>

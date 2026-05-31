@@ -1,3 +1,4 @@
+import { isAdminEmail } from "@/lib/admin";
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -7,9 +8,7 @@ async function validateAdmin() {
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) return { error: "Unauthorized", status: 401 };
-
-  const adminEmails = process.env.ADMIN_EMAILS?.split(",").map(e => e.trim()) || [];
-  if (!adminEmails.includes(user.email || "")) return { error: "Forbidden", status: 403 };
+  if (!isAdminEmail(user.email)) return { error: "Forbidden", status: 403 };
 
   return { user };
 }

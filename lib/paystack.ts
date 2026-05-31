@@ -100,15 +100,16 @@ export async function listPlans() {
   return paystackFetch<PlanData[]>("/plan");
 }
 
+/** Legacy subscription billing (dormant while PLATFORM_IS_FREE). Amounts in NGN. */
 export const PLANS = {
   standard: {
     name: "Standard",
-    amount: 5000,
+    amount: Number(process.env.PAYSTACK_STANDARD_AMOUNT_NGN) || 2500,
     code: process.env.PAYSTACK_STANDARD_PLAN_CODE || "",
   },
   pro: {
     name: "Pro",
-    amount: 10000,
+    amount: Number(process.env.PAYSTACK_PRO_AMOUNT_NGN) || 5000,
     code: process.env.PAYSTACK_PRO_PLAN_CODE || "",
   },
 } as const;

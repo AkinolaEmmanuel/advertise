@@ -56,8 +56,13 @@ export default function SignUpPage() {
       return;
     }
 
-    if (isAvailable === false) {
-      toast.error(availabilityError || "That name is not available");
+    if (isChecking) {
+      toast.error("Please wait while we check availability");
+      return;
+    }
+
+    if (isAvailable !== true) {
+      toast.error(availabilityError || "Please choose an available store name");
       return;
     }
 
@@ -77,9 +82,17 @@ export default function SignUpPage() {
       const result = await res.json();
 
       if (!res.ok) {
-        toast.error(result.error || "Signup failed");
+        const message =
+          typeof result.error === "string"
+            ? result.error
+            : "Signup failed";
+        toast.error(message);
         setIsLoading(false);
         return;
+      }
+
+      if (result.slug && result.slug !== finalSlug) {
+        toast.success(`Your store URL: polowo.live/${result.slug}`);
       }
 
       const supabase = createClient();

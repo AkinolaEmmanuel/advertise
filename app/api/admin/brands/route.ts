@@ -1,3 +1,4 @@
+import { isAdminEmail } from "@/lib/admin";
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
@@ -11,11 +12,7 @@ export async function GET() {
     return NextResponse.json({ error: "No session found" }, { status: 401 });
   }
 
-  const adminEmails = process.env.ADMIN_EMAILS?.split(",").map(e => e.trim()) || [];
-  console.log(`Admin API: Checking access for ${user.email} against [${adminEmails.join(", ")}]`);
-
-  if (!adminEmails.includes(user.email || "")) {
-    console.log(`Admin API: ${user.email} is NOT in the admin list`);
+  if (!isAdminEmail(user.email)) {
     return NextResponse.json({ error: "Not an admin" }, { status: 403 });
   }
 

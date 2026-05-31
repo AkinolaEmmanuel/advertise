@@ -28,7 +28,8 @@ export default function BrandsDirectory() {
       const { data } = await supabase
         .from("brands")
         .select("id, name, slug, logo_url, bio, is_verified")
-        .eq("subscription_status", "active")
+        .eq("is_flagged", false)
+        .in("subscription_status", ["active", "trial"])
         .order("is_verified", { ascending: false });
 
       if (data) setBrands(data);
