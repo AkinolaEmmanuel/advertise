@@ -5,9 +5,8 @@ import Button from "@/components/ui/Button";
 import { Input, Textarea } from "@/components/ui/Input";
 import type { Product } from "@/lib/types";
 import toast from "react-hot-toast";
-import { X } from "lucide-react";
-import Image from "next/image";
 import { apiFetch } from "@/lib/api";
+import ImageUploader from "@/components/dashboard/ImageUploader";
 
 interface ProductFormProps {
   brandId: string;
@@ -95,39 +94,14 @@ export default function ProductForm({ brandId, product, onSuccess, onCancel }: P
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div
-        className="relative aspect-[4/3] sm:aspect-video bg-surface-hover rounded-xl border-2 border-dashed border-border hover:border-white/30 transition-colors cursor-pointer overflow-hidden"
-        onClick={() => {
-          const nextUrl = window.prompt("Paste an image URL", imageUrl);
-          if (nextUrl !== null) setImageUrl(nextUrl.trim());
-        }}
-      >
-        {imageUrl ? (
-          <>
-            <Image
-              src={imageUrl}
-              alt="Preview"
-              fill
-              className="object-cover"
-            />
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setImageUrl("");
-              }}
-              className="absolute top-2 right-2 p-1.5 rounded-lg bg-background/80 text-foreground hover:bg-danger hover:text-white transition-colors cursor-pointer"
-            >
-              <X size={14} />
-            </button>
-          </>
-        ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-muted">
-            <span className="text-sm">Tap to add image URL</span>
-            <span className="text-xs mt-1">Uploads are deferred in this backend split</span>
-          </div>
-        )}
-      </div>
+      <ImageUploader
+        value={imageUrl}
+        onChange={setImageUrl}
+        purpose="product_image"
+        label="Upload product image"
+        helpText="Image files up to 5 MB"
+        alt={name || "Product image preview"}
+      />
 
       <Input
         id="product-name"

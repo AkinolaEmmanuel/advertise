@@ -5,11 +5,11 @@ import { useDashboard } from "../layout";
 import Button from "@/components/ui/Button";
 import { Input, Textarea } from "@/components/ui/Input";
 import toast from "react-hot-toast";
-import { Upload, MessageCircle, Crown, Sparkles, Copy, Check, Palette, Moon, Landmark, Globe } from "lucide-react";
-import Image from "next/image";
+import { MessageCircle, Crown, Sparkles, Copy, Check, Palette, Moon, Landmark, Globe } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 import type { Brand } from "@/lib/types";
+import ImageUploader from "@/components/dashboard/ImageUploader";
 
 const PAYMENT_ACCOUNT = {
   bank: "Opay",
@@ -331,34 +331,15 @@ export default function SettingsPage() {
         <section className="space-y-4">
           <h2 className="text-lg font-semibold text-foreground">Brand Profile</h2>
 
-          <div className="flex items-center gap-4">
-            <div
-              className="w-20 h-20 rounded-2xl bg-surface-hover border-2 border-dashed border-white/10 hover:border-white/30 transition-colors cursor-pointer overflow-hidden shrink-0 flex items-center justify-center"
-              onClick={() => {
-                const nextUrl = window.prompt("Paste a logo URL", logoUrl);
-                if (nextUrl !== null) setLogoUrl(nextUrl.trim());
-              }}
-            >
-              {logoUrl ? (
-                <Image src={logoUrl} alt="Logo" width={80} height={80} className="object-cover w-full h-full" />
-              ) : (
-                <Upload size={20} className="text-muted" />
-              )}
-            </div>
-            <div>
-              <p className="text-sm font-medium text-foreground">Brand Logo</p>
-              <p className="text-xs text-muted">Click to paste an image URL. Square image recommended.</p>
-              {logoUrl && (
-                <button
-                  type="button"
-                  onClick={() => setLogoUrl("")}
-                  className="text-xs text-danger hover:underline mt-1 cursor-pointer"
-                >
-                  Remove
-                </button>
-              )}
-            </div>
-          </div>
+          <ImageUploader
+            value={logoUrl}
+            onChange={setLogoUrl}
+            purpose="brand_logo"
+            label="Brand Logo"
+            helpText="Square image recommended. Max 5 MB."
+            variant="square"
+            alt={`${name || "Brand"} logo preview`}
+          />
 
           <Input
             id="brand-name"

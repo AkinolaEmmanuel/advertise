@@ -13,6 +13,7 @@ export interface Brand {
     trial_ends_at: string;
     subscription_ends_at: string | null;
     is_verified: boolean;
+    is_flagged: boolean;
     theme_settings: any;
     bank_name: string | null;
     account_number: string | null;

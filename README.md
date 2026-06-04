@@ -28,6 +28,14 @@ cp backend/.env.example backend/.env
 
 Set `DATABASE_URL` and `JWT_SECRET` in `backend/.env`. PostgreSQL is expected to be provided externally.
 
+Cloudinary image uploads are signed by the backend and uploaded directly from the browser. Add these to `backend/.env`:
+
+```bash
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+```
+
 ## Database
 
 Run the fresh PostgreSQL migration:
