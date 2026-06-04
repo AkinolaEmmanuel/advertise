@@ -1,6 +1,8 @@
 import { and, asc, eq } from "drizzle-orm";
+import { createHash } from "node:crypto";
 import { Router } from "express";
 import { z } from "zod";
+import { config } from "../config.js";
 import { db } from "../db/index.js";
 import { brands, orders, products } from "../db/schema.js";
 import { requireAuth } from "../middleware/auth.js";
@@ -101,6 +103,46 @@ const productSchema = z.object({
   is_active: z.boolean().optional(),
   sort_order: z.coerce.number().int().optional(),
 });
+
+const uploadSignatureSchema = z.object({
+  purpose: z.enum(["product_image", "brand_logo"]),
+});
+
+function cloudinarySignature(params: Record<string, string | number>) {
+  const payload = Object.entries(params)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([key, value]) => `${key}=${value}`)
+    .join("&");
+
+  return createHash("sha1")
+    .update(`${payload}${config.cloudinaryApiSecret}`)
+    .digest("hex");
+}
+
+dashboardRouter.post(
+  "/dashboard/uploads/signature",
+  asyncHandler(async (req, res) => {
+    if (!config.cloudinaryCloudName || !config.cloudinaryApiKey || !config.cloudinaryApiSecret) {
+      throw new HttpError(500, "Cloudinary upload signing is not configured");
+    }
+
+    uploadSignatureSchema.parse(req.body);
+
+    const brand = await currentBrand((req as AuthedRequest).user.userId);
+    const timestamp = Math.floor(Date.now() / 1000);
+    const folder = `brands/${brand.slug}`;
+    const signedParams = { folder, timestamp };
+
+    res.json({
+      api_key: config.cloudinaryApiKey,
+      cloud_name: config.cloudinaryCloudName,
+      folder,
+      signature: cloudinarySignature(signedParams),
+      timestamp,
+      upload_url: `https://api.cloudinary.com/v1_1/${config.cloudinaryCloudName}/image/upload`,
+    });
+  })
+);
 
 dashboardRouter.post(
   "/dashboard/products",

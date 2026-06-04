@@ -17,6 +17,9 @@ export const config = {
   paystackSecretKey: process.env.PAYSTACK_SECRET_KEY || "",
   paystackStandardPlanCode: process.env.PAYSTACK_STANDARD_PLAN_CODE || "",
   paystackProPlanCode: process.env.PAYSTACK_PRO_PLAN_CODE || "",
+  cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME || "",
+  cloudinaryApiKey: process.env.CLOUDINARY_API_KEY || "",
+  cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET || "",
 };
 
 if (!config.databaseUrl) {
@@ -25,4 +28,8 @@ if (!config.databaseUrl) {
 
 if (config.jwtSecret === "dev-only-change-me") {
   console.warn("JWT_SECRET is using the development fallback. Set JWT_SECRET before production use.");
+}
+
+if (!config.cloudinaryCloudName || !config.cloudinaryApiKey || !config.cloudinaryApiSecret) {
+  console.warn("Cloudinary upload signing is not configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET.");
 }
