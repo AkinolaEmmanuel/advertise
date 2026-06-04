@@ -1,11 +1,12 @@
 import { Resend } from "resend";
 import { config } from "../config.js";
+import { logger } from "../utils/logger.js";
 
 const resend = new Resend(config.resendApiKey);
 
 export async function sendMail(options: { to: string; subject: string; html: string }) {
   if (!config.emailEnabled) {
-    console.log("[email disabled]", { to: options.to, subject: options.subject });
+    logger.info("[email disabled]", { to: options.to, subject: options.subject });
     return { id: "email-disabled" };
   }
 

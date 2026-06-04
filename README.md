@@ -36,6 +36,14 @@ CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 ```
 
+Backend logs use colored levels and request timing. Set `LOG_LEVEL` in `backend/.env` to control verbosity:
+
+```bash
+LOG_LEVEL=info
+```
+
+Supported values are `debug`, `info`, `warn`, `error`, and `silent`. Set `NO_COLOR=1` to disable terminal colors.
+
 ## Database
 
 Run the fresh PostgreSQL migration:
