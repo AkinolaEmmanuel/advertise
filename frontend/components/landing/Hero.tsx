@@ -45,7 +45,7 @@ export default function Hero() {
                 href="/signup"
                 className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-4 rounded-xl bg-white text-black font-semibold hover:bg-neutral-200 transition-all text-sm uppercase tracking-wider"
               >
-                Start Free for 7 Days
+                Start For Free
                 <ArrowRight size={18} />
               </Link>
               <Link

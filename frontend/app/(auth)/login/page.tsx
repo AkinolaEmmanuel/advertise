@@ -21,8 +21,11 @@ function LoginContent() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (searchParams.get("error") === "session_expired") {
+    const error = searchParams.get("error");
+    if (error === "session_expired") {
       toast.error("Your session has expired. Please sign in again.");
+    } else if (error === "config") {
+      toast.error("App configuration is incomplete. Contact support.");
     }
   }, [searchParams]);
 
@@ -38,18 +41,16 @@ function LoginContent() {
     try {
       const data = await login(email, password);
       toast.success("Welcome back!");
-      
-      // Check if user is an admin
+
       const adminEmails = process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(",") || ["akinola@gmail.com", "admin@polowo.live"];
       if (adminEmails.includes(data.user.email)) {
         router.push("/admin");
       } else {
         router.push("/dashboard");
       }
-      
       router.refresh();
-    } catch (error: any) {
-      toast.error(error.message || "Something went wrong. Please try again.");
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : "Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
     }

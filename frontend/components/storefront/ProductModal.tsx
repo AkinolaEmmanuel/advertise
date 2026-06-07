@@ -28,7 +28,10 @@ export default function ProductModal({ product, onClose, primaryColor, isDark }:
 
   function handleAdd() {
     if (outOfStock) return;
-    addItem(product);
+    if (!addItem(product)) {
+      toast.error("Maximum stock reached");
+      return;
+    }
     toast.success(`${product.name} added to bag`);
   }
 
@@ -110,7 +113,9 @@ export default function ProductModal({ product, onClose, primaryColor, isDark }:
                       toast.error("Maximum stock reached");
                       return;
                     }
-                    updateQuantity(product.id, cartItem.quantity + 1);
+                    if (!updateQuantity(product.id, cartItem.quantity + 1)) {
+                      toast.error("Maximum stock reached");
+                    }
                   }}
                   className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
                     isDark ? "bg-white/5 hover:bg-white/10 text-white" : "bg-black/5 hover:bg-black/10 text-black"

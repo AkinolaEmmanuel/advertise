@@ -1,11 +1,13 @@
-# Advertise
+# polowo
+
+Hosted storefronts for Nigerian small businesses: merchant dashboard, public store at `/[slug]`, and WhatsApp-first checkout.
 
 This repository is split into two apps:
 
 - `frontend/`: Next.js storefront, dashboard, and admin UI.
 - `backend/`: Node.js, Express, Drizzle ORM, and PostgreSQL API.
 
-The frontend no longer uses Supabase directly. It stores a bearer token in local storage and calls the Express API through `/api/*` rewrites.
+The frontend stores a bearer token in local storage and calls the Express API through `/api/*` rewrites.
 
 ## Setup
 
@@ -78,6 +80,12 @@ npm run dev
 
 The frontend runs on `http://localhost:3000` and proxies `/api/*` to `NEXT_PUBLIC_API_URL`, which defaults to `http://localhost:4000`.
 
+## Production Deployment
+
+Set the same required variables shown in `frontend/.env.example` and `backend/.env.example` on your host. At minimum, the backend needs a database URL and JWT secret; optional integrations such as Cloudinary, Resend, and Paystack require their respective keys.
+
+Before deploying, run the frontend build and backend typecheck locally or in CI.
+
 ## Useful Scripts
 
 ```bash
@@ -90,3 +98,7 @@ npm run typecheck
 npm run db:generate
 npm run db:migrate
 ```
+
+## Stack
+
+Next.js 16 App Router, Express, PostgreSQL, Drizzle ORM, Tailwind v4, Zustand cart, Resend optional email, and Paystack optional payments.

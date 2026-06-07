@@ -24,7 +24,7 @@ export default function CallToAction() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="text-muted text-lg mb-10"
         >
-          Join thousands of small businesses selling smarter. Free for 7 days.
+          Join small businesses selling smarter on pòlówó — 100% free, no monthly fees.
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 12 }}

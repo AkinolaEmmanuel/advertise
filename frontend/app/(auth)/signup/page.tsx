@@ -24,10 +24,17 @@ export default function SignUpPage() {
   const [availabilityError, setAvailabilityError] = useState("");
   const [finalSlug, setFinalSlug] = useState("");
 
-  useEffect(() => {
-    if (brandName.length < 2) {
+  function handleBrandNameChange(value: string) {
+    setBrandName(value);
+    if (value.length < 2) {
       setIsAvailable(null);
       setAvailabilityError("");
+      setFinalSlug("");
+    }
+  }
+
+  useEffect(() => {
+    if (brandName.length < 2) {
       return;
     }
 
@@ -56,20 +63,28 @@ export default function SignUpPage() {
       return;
     }
 
-    if (isAvailable === false) {
-      toast.error(availabilityError || "That name is not available");
+    if (isChecking) {
+      toast.error("Please wait while we check availability");
+      return;
+    }
+
+    if (isAvailable !== true) {
+      toast.error(availabilityError || "Please choose an available store name");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      await signup(email, password, brandName.trim());
+      const data = await signup(email, password, brandName.trim());
+      if (data.brand?.slug && data.brand.slug !== finalSlug) {
+        toast.success(`Your store URL: polowo.live/${data.brand.slug}`);
+      }
       toast.success("Account created! Welcome aboard.");
       router.push("/dashboard");
       router.refresh();
-    } catch (error: any) {
-      toast.error(error.message || "Something went wrong. Please try again.");
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : "Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -90,7 +105,7 @@ export default function SignUpPage() {
             type="text"
             placeholder="e.g. Vintage Collectibles"
             value={brandName}
-            onChange={(e) => setBrandName(e.target.value)}
+            onChange={(e) => handleBrandNameChange(e.target.value)}
             required
             className={isAvailable === false ? "border-danger focus:ring-danger/20" : isAvailable === true ? "border-green-500 focus:ring-green-500/20" : ""}
           />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useDashboard } from "../layout";
 import type { Product } from "@/lib/types";
 import ProductCard from "@/components/dashboard/ProductCard";
@@ -18,15 +18,27 @@ export default function ProductsPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
-  const fetchProducts = useCallback(async () => {
+  async function fetchProducts() {
     const data = await apiFetch<Product[]>("/api/dashboard/products").catch(() => []);
     setProducts(data);
     setLoading(false);
-  }, []);
+  }
 
   useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+    let ignore = false;
+
+    apiFetch<Product[]>("/api/dashboard/products")
+      .catch(() => [])
+      .then((data) => {
+        if (ignore) return;
+        setProducts(data);
+        setLoading(false);
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   async function handleToggle(id: string, isActive: boolean) {
     try {

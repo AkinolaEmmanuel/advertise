@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import type { Product } from "@/lib/types";
+import type { Brand, Product } from "@/lib/types";
 import ProductGrid from "@/components/storefront/ProductGrid";
 import ProductModal from "@/components/storefront/ProductModal";
 import { logEvent } from "@/lib/analytics";
 
 interface StorefrontContentProps {
-  brand: any;
+  brand: Brand;
   products: Product[];
 }
 

@@ -1,45 +1,44 @@
 import { publicApiFetch } from "./api";
 
 export type AnalyticsEventType =
-    | 'page_view'
-    | 'product_click'
-    | 'whatsapp_click'
-    | 'transfer_click';
+  | "page_view"
+  | "product_click"
+  | "whatsapp_click"
+  | "transfer_click";
 
 /**
- * Logs an event to the internal analytics system.
- * This is designed to be called from client-side components.
+ * Logs an event via the validated server API (no direct DB insert from the client).
  */
 export async function logEvent(
-    brandId: string,
-    eventType: AnalyticsEventType,
-    productId?: string,
-    metadata: any = {}
+  brandId: string,
+  eventType: AnalyticsEventType,
+  productId?: string,
+  metadata: Record<string, unknown> = {}
 ) {
-    if (!brandId) return;
+  if (!brandId) return;
 
-    try {
-        const payload: any = {
-            brand_id: brandId,
-            event_type: eventType,
-            metadata: {
-                ...metadata,
-                url: typeof window !== 'undefined' ? window.location.href : '',
-                userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
-            }
-        };
+  try {
+    const payload: Record<string, unknown> = {
+      brand_id: brandId,
+      event_type: eventType,
+      metadata: {
+        ...metadata,
+        url: typeof window !== "undefined" ? window.location.href : "",
+        userAgent:
+          typeof navigator !== "undefined" ? navigator.userAgent : "",
+      },
+    };
 
-        // Only include product_id if it's a valid string/UUID
-        if (productId && productId.trim()) {
-            payload.product_id = productId;
-        }
-
-        await publicApiFetch("/api/analytics/events", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-        });
-    } catch (err) {
-        console.error("Analytics log failed unexpectedly:", err);
+    if (productId?.trim()) {
+      payload.product_id = productId.trim();
     }
+
+    await publicApiFetch("/api/analytics/events", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+  } catch (err) {
+    console.error("Analytics log failed:", err);
+  }
 }

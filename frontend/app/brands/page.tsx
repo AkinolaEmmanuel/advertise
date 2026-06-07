@@ -25,7 +25,7 @@ export default function BrandsDirectory() {
   useEffect(() => {
     async function fetchBrands() {
       const data = await publicApiFetch<Brand[]>("/api/brands").catch(() => []);
-      setBrands(data.filter((brand) => (brand as any).subscription_status === "active"));
+      setBrands(data);
       setIsLoading(false);
     }
     fetchBrands();

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import StorefrontContent from "./StorefrontContent";
 import { publicApiFetch } from "@/lib/api";
 import type { Brand, Product } from "@/lib/types";
@@ -13,7 +14,6 @@ export default async function StorefrontPage({ params }: Props) {
 
   if (!data) notFound();
 
-  // Block access to flagged or expired storefronts
   const isExpired = data.brand.subscription_status === "expired" || data.brand.subscription_status === "cancelled";
   if (data.brand.is_flagged || isExpired) {
     return (
@@ -24,7 +24,7 @@ export default async function StorefrontPage({ params }: Props) {
             ? "This account has been suspended by the platform administrators."
             : "This pòlówó has expired. If you are the owner, please renew your subscription."}
         </p>
-        <a href="/" className="mt-8 text-primary font-medium hover:underline">← Back to pòlówó</a>
+        <Link href="/" className="mt-8 text-primary font-medium hover:underline">← Back to pòlówó</Link>
       </div>
     );
   }
