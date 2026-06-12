@@ -1,69 +1,104 @@
-# pòlówó
+# polowo
 
-Hosted storefronts for Nigerian small businesses — merchant dashboard, public store at `/[slug]`, WhatsApp-first checkout.
+Hosted storefronts for Nigerian small businesses: merchant dashboard, public store at `/[slug]`, and WhatsApp-first checkout.
 
-## Local development
+This repository is split into two apps:
 
-1. **Dependencies**
+- `frontend/`: Next.js storefront, dashboard, and admin UI.
+- `backend/`: Node.js, Express, Drizzle ORM, and PostgreSQL API.
 
-   ```bash
-   npm install
-   ```
+The frontend stores a bearer token in local storage and calls the Express API through `/api/*` rewrites.
 
-2. **Environment**
+## Setup
 
-   You already have a `.env` locally; new clones should copy the template:
+Install dependencies for each app:
 
-   ```bash
-   cp .env.example .env
-   ```
+```bash
+cd backend
+npm install
 
-   Fill in Supabase keys from [Supabase](https://supabase.com) → Project Settings → API. Match variable names in `.env.example` (your existing `.env` is fine — no need to rename keys).
+cd ../frontend
+npm install
+```
 
-3. **Database**
+Create environment files:
 
-   - Fresh project: run `supabase/schema.sql` in the Supabase SQL Editor.
-   - Existing project: also run `supabase/migrations/20260530_tighten_public_writes.sql` so orders/analytics go through the API routes (not open client INSERT).
+```bash
+cp frontend/.env.example frontend/.env.local
+cp backend/.env.example backend/.env
+```
 
-4. **Run**
+Set `DATABASE_URL` and `JWT_SECRET` in `backend/.env`. PostgreSQL is expected to be provided externally.
 
-   ```bash
-   npm run dev
-   ```
+Cloudinary image uploads are signed by the backend and uploaded directly from the browser. Add these to `backend/.env`:
 
-   Open [http://localhost:3000](http://localhost:3000).
+```bash
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+```
 
-## Production deployment (e.g. Vercel)
+Backend logs use colored levels and request timing. Set `LOG_LEVEL` in `backend/.env` to control verbosity:
 
-| Variable | Required | Notes |
-|----------|----------|--------|
-| `NEXT_PUBLIC_SUPABASE_URL` | Yes | |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | |
-| `SUPABASE_SERVICE_ROLE_KEY` | Yes | Server-only; never expose to the client |
-| `NEXT_PUBLIC_APP_URL` | Yes | Production URL, e.g. `https://yourdomain.com` |
-| `ADMIN_EMAILS` | Yes for admin | Comma-separated; must match login email for `/admin` |
-| `ENABLE_EMAIL` | No | `true` to send via Resend |
-| `RESEND_API_KEY` | If email on | |
-| `FROM_EMAIL` | If email on | Verified sender in Resend |
-| `PAYSTACK_SECRET_KEY` | No | Platform is free; only if you re-enable Paystack |
-| `ADMIN_SETUP_KEY` | No | Protects one-time admin setup API |
+```bash
+LOG_LEVEL=info
+```
 
-**Checklist**
+Supported values are `debug`, `info`, `warn`, `error`, and `silent`. Set `NO_COLOR=1` to disable terminal colors.
 
-1. Set all required env vars in the host dashboard (same names as `.env.example`).
-2. Run the migration SQL on production Supabase if the DB predates the API write hardening.
-3. `npm run build` must pass in CI or locally before deploy.
-4. After deploy: sign up → add WhatsApp or account number in settings → place a test order on your storefront slug.
+## Database
 
-## Scripts
+Run the fresh PostgreSQL migration:
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Development server |
-| `npm run build` | Production build |
-| `npm run start` | Start production server |
-| `npm run lint` | ESLint |
+```bash
+cd backend
+npm run db:migrate
+```
+
+Seed a demo account:
+
+```bash
+cd backend
+npm run seed
+```
+
+The seed user is `admin@polowo.live` with password `password123`.
+
+## Development
+
+Run backend and frontend in separate terminals:
+
+```bash
+cd backend
+npm run dev
+```
+
+```bash
+cd frontend
+npm run dev
+```
+
+The frontend runs on `http://localhost:3000` and proxies `/api/*` to `NEXT_PUBLIC_API_URL`, which defaults to `http://localhost:4000`.
+
+## Production Deployment
+
+Set the same required variables shown in `frontend/.env.example` and `backend/.env.example` on your host. At minimum, the backend needs a database URL and JWT secret; optional integrations such as Cloudinary, Resend, and Paystack require their respective keys.
+
+Before deploying, run the frontend build and backend typecheck locally or in CI.
+
+## Useful Scripts
+
+```bash
+cd frontend
+npm run build
+npm run lint
+
+cd ../backend
+npm run typecheck
+npm run db:generate
+npm run db:migrate
+```
 
 ## Stack
 
-Next.js 16 (App Router), Supabase, Tailwind v4, Zustand cart, Resend (optional email).
+Next.js 16 App Router, Express, PostgreSQL, Drizzle ORM, Tailwind v4, Zustand cart, Resend optional email, and Paystack optional payments.
