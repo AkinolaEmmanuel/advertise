@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { LayoutDashboard, Package, Settings, Eye, LogOut, ShoppingCart, BarChart3 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { logout } from "@/lib/auth";
+import PolowoLogo from "@/components/brand/PolowoLogo";
 
 const navItems = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
@@ -26,11 +27,9 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="hidden lg:flex flex-col w-64 border-r border-white/5 bg-surface h-screen sticky top-0">
-      <div className="px-6 py-6 border-b border-white/5">
-        <Link href="/">
-          <h1 className="text-lg font-bold tracking-tight text-white">pòlówó</h1>
-        </Link>
+    <aside className="hidden lg:flex flex-col w-64 border-r border-border bg-surface h-screen sticky top-0">
+      <div className="px-6 py-6 border-b border-border">
+        <PolowoLogo href="/" size="sm" />
       </div>
 
       <nav className="flex-1 p-4 space-y-1">
@@ -46,8 +45,8 @@ export default function Sidebar() {
               href={item.href}
               className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                 isActive
-                  ? "bg-white text-black"
-                  : "text-muted hover:text-white hover:bg-white/5"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted hover:text-foreground hover:bg-primary-soft"
               }`}
             >
               <item.icon size={16} />
@@ -57,7 +56,7 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="p-4 border-t border-white/5">
+      <div className="p-4 border-t border-border">
         <button
           onClick={handleLogout}
           className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-muted hover:text-danger hover:bg-danger/10 transition-all duration-200 w-full cursor-pointer"

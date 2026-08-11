@@ -1,29 +1,32 @@
 "use client";
 
-import Navbar from "@/components/landing/Navbar";
 import Hero from "@/components/landing/Hero";
+import IntegrationStrip from "@/components/landing/IntegrationStrip";
+import WhatsAppCheckoutDemo from "@/components/landing/WhatsAppCheckoutDemo";
 import Features from "@/components/landing/Features";
+import MarketplacePreview from "@/components/landing/MarketplacePreview";
 import HowItWorks from "@/components/landing/HowItWorks";
 import Testimonials from "@/components/landing/Testimonials";
 import Pricing from "@/components/landing/Pricing";
+import CompetitiveFAQ from "@/components/landing/CompetitiveFAQ";
 import CallToAction from "@/components/landing/CallToAction";
-import Footer from "@/components/landing/Footer";
-import BackgroundEffects from "@/components/landing/BackgroundEffects";
-import MobileTabBar from "@/components/landing/MobileTabBar";
+import MarketingShell from "@/components/marketing/MarketingShell";
 
 export default function LandingPage() {
   return (
-    <div className="relative min-h-screen bg-background text-foreground selection:bg-white selection:text-black overflow-x-hidden">
-      <BackgroundEffects />
-      <Navbar />
-      <Hero />
-      <Features />
-      <HowItWorks />
-      <Testimonials />
-      <Pricing />
-      <CallToAction />
-      <Footer />
-      <MobileTabBar />
-    </div>
+    <MarketingShell>
+      <main>
+        <Hero />
+        <IntegrationStrip />
+        <WhatsAppCheckoutDemo />
+        <Features />
+        <MarketplacePreview />
+        <HowItWorks />
+        <Testimonials />
+        <Pricing />
+        <CompetitiveFAQ />
+        <CallToAction />
+      </main>
+    </MarketingShell>
   );
 }

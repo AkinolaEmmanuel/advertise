@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import PolowoLogo from "@/components/brand/PolowoLogo";
 import StorefrontContent from "./StorefrontContent";
 import { publicApiFetch } from "@/lib/api";
 import type { Brand, Product } from "@/lib/types";
@@ -17,8 +18,11 @@ export default async function StorefrontPage({ params }: Props) {
   const isExpired = data.brand.subscription_status === "expired" || data.brand.subscription_status === "cancelled";
   if (data.brand.is_flagged || isExpired) {
     return (
-      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-center">
-        <h1 className="text-4xl font-bold text-white mb-4">pòlówó Unavailable</h1>
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center">
+        <div className="mb-8">
+          <PolowoLogo size="lg" />
+        </div>
+        <h1 className="text-4xl font-bold text-foreground mb-4">pòlówó Unavailable</h1>
         <p className="text-muted max-w-md">
           {data.brand.is_flagged 
             ? "This account has been suspended by the platform administrators."

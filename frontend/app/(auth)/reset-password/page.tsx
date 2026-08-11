@@ -44,8 +44,8 @@ function ResetPasswordContent() {
       });
       toast.success("Password updated successfully!");
       router.push("/login");
-    } catch (error: any) {
-      toast.error(error.message || "Password reset failed");
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : "Password reset failed");
     }
 
     setIsLoading(false);

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/providers/QueryProvider";
+import ThemeProvider from "@/providers/ThemeProvider";
 import { Toaster } from "react-hot-toast";
 
 const inter = Inter({
@@ -9,11 +10,24 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+const outfit = Outfit({
+  variable: "--font-outfit",
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
-  title: "pòlówó — Create your own online store",
+  title: "pòlówó — Free storefront for WhatsApp sales",
   description:
-    "Turn your products into a professional online storefront in 60 seconds. The visual-first storefront for small businesses.",
+    "Create a free online storefront for WhatsApp and bank transfer sales. Unlimited products, one link, built for Nigerian sellers.",
 };
+
+const themeScript = `
+  try {
+    var t = localStorage.getItem('polowo-theme');
+    if (t === 'dark') document.documentElement.classList.add('dark');
+    else document.documentElement.classList.remove('dark');
+  } catch (e) {}
+`;
 
 export default function RootLayout({
   children,
@@ -21,21 +35,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body id="top" className={`${inter.variable} antialiased selection:bg-white selection:text-black`}>
-        <QueryProvider>
-          {children}
-          <Toaster
-            position="top-right"
-            toastOptions={{
-              style: {
-                background: "#18181b",
-                color: "#fafafa",
-                border: "1px solid #27272a",
-              },
-            }}
-          />
-        </QueryProvider>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body
+        id="top"
+        className={`${inter.variable} ${outfit.variable} antialiased selection:bg-primary selection:text-primary-foreground`}
+      >
+        <ThemeProvider>
+          <QueryProvider>
+            {children}
+            <Toaster position="top-right" />
+          </QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

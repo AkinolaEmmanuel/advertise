@@ -1,124 +1,102 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { BadgeCheck, Search, ArrowRight, ExternalLink } from "lucide-react";
-import Link from "next/link";
-import Navbar from "@/components/landing/Navbar";
-import Footer from "@/components/landing/Footer";
-import MobileTabBar from "@/components/landing/MobileTabBar";
+import { useEffect, useMemo, useState } from "react";
+import { Search } from "lucide-react";
+import MarketingShell from "@/components/marketing/MarketingShell";
+import SectionHeader from "@/components/marketing/SectionHeader";
+import BrandCard, { type BrandCardData } from "@/components/marketing/BrandCard";
 import { publicApiFetch } from "@/lib/api";
 
-interface Brand {
-  id: string;
-  name: string;
-  slug: string;
-  logo_url: string;
-  bio: string;
-  is_verified: boolean;
+const categories = ["All", "Fashion", "Food", "Beauty", "Electronics"] as const;
+
+function matchesCategory(brand: BrandCardData, category: string) {
+  if (category === "All") return true;
+  const haystack = `${brand.name} ${brand.bio ?? ""}`.toLowerCase();
+  return haystack.includes(category.toLowerCase());
 }
 
 export default function BrandsDirectory() {
-  const [brands, setBrands] = useState<Brand[]>([]);
+  const [brands, setBrands] = useState<BrandCardData[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [category, setCategory] = useState<string>("All");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchBrands() {
-      const data = await publicApiFetch<Brand[]>("/api/brands").catch(() => []);
-      setBrands(data);
-      setIsLoading(false);
-    }
-    fetchBrands();
+    publicApiFetch<BrandCardData[]>("/api/brands")
+      .then(setBrands)
+      .catch(() => setBrands([]))
+      .finally(() => setIsLoading(false));
   }, []);
 
-  const filteredBrands = brands.filter(b => 
-    b.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    b.slug.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredBrands = useMemo(() => {
+    return brands.filter((b) => {
+      const q = searchTerm.toLowerCase();
+      const matchesSearch =
+        b.name.toLowerCase().includes(q) ||
+        b.slug.toLowerCase().includes(q) ||
+        (b.bio?.toLowerCase().includes(q) ?? false);
+      return matchesSearch && matchesCategory(b, category);
+    });
+  }, [brands, searchTerm, category]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
-      <Navbar />
-      
-      <main className="flex-1 max-w-7xl mx-auto px-6 py-20 w-full">
-        <div className="space-y-4 mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tighter uppercase">pòlówó Marketplace</h1>
-          <p className="text-muted max-w-2xl">
-            Discover premium brands using our platform to power their online stores. 
-            All brands listed here are active and verified by our team.
-          </p>
-          
-          <div className="relative max-w-md pt-4">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" size={18} />
+    <MarketingShell>
+      <main className="flex-1 max-w-6xl mx-auto px-6 py-12 sm:py-16 w-full pb-28 md:pb-16">
+        <SectionHeader
+          align="left"
+          eyebrow="Explore"
+          title="Discover Nigerian brands on pòlówó"
+          subtitle="Independent storefronts — not a marketplace like Jumia. Visit any store and order directly with the owner."
+          className="max-w-3xl"
+        />
+
+        <div className="sticky top-[4.5rem] z-40 py-3 -mx-6 px-6 bg-background/90 backdrop-blur-md border-b border-border mb-8">
+          <div className="relative max-w-xl">
+            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
             <input
-              type="text"
-              placeholder="Search brands..."
+              type="search"
+              placeholder="Search by name or slug..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-surface border border-white/5 rounded-2xl pl-12 pr-4 py-4 text-sm focus:outline-none focus:border-primary/30 transition-all shadow-xl"
+              className="w-full h-12 pl-11 pr-4 rounded-xl border border-border bg-surface text-foreground placeholder:text-muted focus:outline-none focus:border-accent/50"
             />
+          </div>
+          <div className="flex flex-wrap gap-2 mt-3">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setCategory(cat)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                  category === cat
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-surface border border-border text-muted hover:text-foreground"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
           </div>
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-64 bg-surface rounded-3xl animate-pulse" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[...Array(9)].map((_, i) => (
+              <div key={i} className="h-28 rounded-2xl bg-surface border border-border animate-pulse" />
             ))}
           </div>
         ) : filteredBrands.length === 0 ? (
-          <div className="text-center py-20 bg-surface border border-white/5 rounded-3xl">
-             <p className="text-muted">No brands found matching your search.</p>
+          <div className="text-center py-20">
+            <p className="text-muted">No brands found. Be the first — create your free store.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredBrands.map((brand) => (
-              <Link 
-                key={brand.id} 
-                href={`/${brand.slug}`}
-                target="_blank"
-                className="group relative bg-surface border border-white/5 rounded-3xl p-8 hover:border-primary/20 transition-all hover:shadow-2xl hover:-translate-y-1 block overflow-hidden"
-              >
-                <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 -translate-y-4 group-hover:translate-x-0 group-hover:translate-y-0">
-                   <div className="p-2 rounded-xl bg-white/10 backdrop-blur-md border border-white/10 text-white">
-                     <ExternalLink size={18} />
-                   </div>
-                </div>
-
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/5 overflow-hidden shrink-0 flex items-center justify-center text-xl font-bold">
-                    {brand.logo_url ? (
-                      <img src={brand.logo_url} alt={brand.name} className="w-full h-full object-cover" />
-                    ) : (
-                      brand.name[0]
-                    )}
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-bold text-white uppercase tracking-tight">{brand.name}</h3>
-                      {brand.is_verified && <BadgeCheck size={16} className="text-primary" />}
-                    </div>
-                    <p className="text-xs text-muted">polowo.live/{brand.slug}</p>
-                  </div>
-                </div>
-
-                {brand.bio && (
-                  <p className="text-sm text-muted line-clamp-2 leading-relaxed mb-6">
-                    {brand.bio}
-                  </p>
-                )}
-
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary group-hover:gap-4 transition-all">
-                  Visit store <ArrowRight size={14} />
-                </div>
-              </Link>
+              <BrandCard key={brand.id} brand={brand} />
             ))}
           </div>
         )}
       </main>
-
-      <Footer />
-      <MobileTabBar />
-    </div>
+    </MarketingShell>
   );
 }

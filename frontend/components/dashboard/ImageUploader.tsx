@@ -66,8 +66,8 @@ export default function ImageUploader({
         type="button"
         className={
           isSquare
-            ? "relative w-20 h-20 rounded-2xl bg-surface-hover border-2 border-dashed border-white/10 hover:border-white/30 transition-colors cursor-pointer overflow-hidden shrink-0 flex items-center justify-center disabled:cursor-not-allowed disabled:opacity-60"
-            : "relative w-full aspect-[4/3] sm:aspect-video bg-surface-hover rounded-xl border-2 border-dashed border-border hover:border-white/30 transition-colors cursor-pointer overflow-hidden disabled:cursor-not-allowed disabled:opacity-60"
+            ? "relative w-20 h-20 rounded-2xl bg-surface-hover border-2 border-dashed border-border hover:border-accent/40 transition-colors cursor-pointer overflow-hidden shrink-0 flex items-center justify-center disabled:cursor-not-allowed disabled:opacity-60"
+            : "relative w-full aspect-[4/3] sm:aspect-video bg-surface-hover rounded-xl border-2 border-dashed border-border hover:border-accent/40 transition-colors cursor-pointer overflow-hidden disabled:cursor-not-allowed disabled:opacity-60"
         }
         onClick={() => fileInputRef.current?.click()}
         disabled={isUploading}

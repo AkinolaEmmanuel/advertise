@@ -43,9 +43,13 @@ export default function BrandsAdmin() {
   async function updatePlan(id: string, plan: string) {
     try {
       const isPaid = plan === "standard" || plan === "pro";
-      const payload: any = {
+      const payload: {
+        plan_type: string;
+        subscription_status: string;
+        subscription_ends_at?: string | null;
+      } = {
         plan_type: plan,
-        subscription_status: isPaid ? "active" : (plan === "free" ? "trial" : "active"),
+        subscription_status: isPaid ? "active" : plan === "free" ? "trial" : "active",
       };
 
       if (isPaid) {
@@ -117,7 +121,7 @@ export default function BrandsAdmin() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Brand Management</h1>
+          <h1 className="text-2xl font-bold text-foreground">Brand Management</h1>
           <p className="text-muted text-sm mt-1">Manage plans, subscriptions and moderate accounts.</p>
         </div>
         <div className="flex items-center gap-3">
@@ -128,20 +132,20 @@ export default function BrandsAdmin() {
               placeholder="Search brands..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-surface border border-white/5 rounded-xl pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-white/20 transition-all w-64"
+              className="bg-surface border border-border rounded-xl pl-10 pr-4 py-2 text-sm text-foreground focus:outline-none focus:border-accent/50 transition-all w-64"
             />
           </div>
-          <button className="p-2 rounded-xl bg-surface border border-white/5 text-muted hover:text-white transition-colors">
+          <button className="p-2 rounded-xl bg-surface border border-border text-muted hover:text-foreground transition-colors">
             <Filter size={18} />
           </button>
         </div>
       </div>
 
-      <div className="bg-surface border border-white/5 rounded-2xl overflow-hidden">
+      <div className="bg-surface border border-border rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="border-b border-white/5 bg-white/5 text-[10px] uppercase tracking-wider font-bold text-muted">
+              <tr className="border-b border-border bg-primary-soft text-[10px] uppercase tracking-wider font-bold text-muted">
                 <th className="px-6 py-4">Brand</th>
                 <th className="px-6 py-4">Plan</th>
                 <th className="px-6 py-4">Status</th>
@@ -153,7 +157,7 @@ export default function BrandsAdmin() {
               {isLoading ? (
                 [...Array(5)].map((_, i) => (
                   <tr key={i} className="animate-pulse">
-                    <td colSpan={5} className="px-6 py-8 h-16 bg-white/[0.02]" />
+                    <td colSpan={5} className="px-6 py-8 h-16 bg-primary-soft" />
                   </tr>
                 ))
               ) : filteredBrands.length === 0 ? (
@@ -164,15 +168,15 @@ export default function BrandsAdmin() {
                 </tr>
               ) : (
                 filteredBrands.map((brand) => (
-                  <tr key={brand.id} className={`group hover:bg-white/[0.02] transition-colors ${brand.is_flagged ? "bg-danger/5" : ""}`}>
+                  <tr key={brand.id} className={`group hover:bg-primary-soft transition-colors ${brand.is_flagged ? "bg-danger/5" : ""}`}>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-surface-hover flex items-center justify-center text-xs font-bold text-white">
+                        <div className="w-8 h-8 rounded-lg bg-surface-hover flex items-center justify-center text-xs font-bold text-foreground">
                           {brand.name[0]}
                         </div>
                         <div>
                           <div className="flex items-center gap-1.5">
-                            <p className="text-sm font-medium text-white">{brand.name}</p>
+                            <p className="text-sm font-medium text-foreground">{brand.name}</p>
                             {brand.is_verified && <BadgeCheck size={14} className="text-primary" />}
                           </div>
                           <p className="text-xs text-muted">/{brand.slug}</p>
@@ -183,8 +187,8 @@ export default function BrandsAdmin() {
                       <select
                         value={brand.plan_type || "free"}
                         onChange={(e) => updatePlan(brand.id, e.target.value)}
-                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md bg-white/5 border-none outline-none cursor-pointer ${
-                          brand.plan_type === "pro" ? "text-primary" : brand.plan_type === "standard" ? "text-green-400" : "text-muted"
+                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md bg-primary-soft border-none outline-none cursor-pointer ${
+                          brand.plan_type === "pro" ? "text-primary" : brand.plan_type === "standard" ? "text-success" : "text-muted"
                         }`}
                       >
                         <option value="free">Free/Trial</option>
@@ -196,8 +200,8 @@ export default function BrandsAdmin() {
                       <select
                         value={brand.subscription_status}
                         onChange={(e) => updateStatus(brand.id, e.target.value)}
-                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md bg-white/5 border-none outline-none cursor-pointer ${
-                          brand.subscription_status === "active" ? "text-green-400" : brand.subscription_status === "expired" ? "text-danger" : "text-muted"
+                        className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md bg-primary-soft border-none outline-none cursor-pointer ${
+                          brand.subscription_status === "active" ? "text-success" : brand.subscription_status === "expired" ? "text-danger" : "text-muted"
                         }`}
                       >
                         <option value="trial">Trial</option>
@@ -230,7 +234,7 @@ export default function BrandsAdmin() {
                           href={`/${brand.slug}`}
                           target="_blank"
                           title="View Storefront"
-                          className="p-2 rounded-lg hover:bg-white/5 text-muted hover:text-white transition-colors"
+                          className="p-2 rounded-lg hover:bg-primary-soft text-muted hover:text-foreground transition-colors"
                         >
                           <ExternalLink size={16} />
                         </a>

@@ -95,28 +95,32 @@ export default function SettingsPage() {
 
       <section className="space-y-4">
         <div className="flex items-center gap-2">
-          <Palette size={18} className="text-white" />
+          <Palette size={18} className="text-accent" />
           <h2 className="text-lg font-semibold text-foreground">Storefront Customization</h2>
         </div>
-        <div className="bg-surface border border-white/5 rounded-2xl p-6 space-y-6">
+        <div className="bg-surface border border-border rounded-2xl p-6 space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-xs font-bold text-muted uppercase tracking-wider">Theme Mode</label>
-              <div className="flex bg-white/5 p-1 rounded-xl gap-1">
-                <button 
+              <div className="flex bg-primary-soft p-1 rounded-xl gap-1">
+                <button
                   type="button"
                   onClick={() => setThemeSettings({ ...themeSettings, theme: "light" })}
                   className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all ${
-                    themeSettings.theme === 'light' ? 'bg-white text-black' : 'text-muted hover:text-white'
+                    themeSettings.theme === "light"
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted hover:text-foreground"
                   }`}
                 >
                   <Sparkles size={14} /> Light
                 </button>
-                <button 
+                <button
                   type="button"
                   onClick={() => setThemeSettings({ ...themeSettings, theme: "dark" })}
                   className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-medium transition-all ${
-                    themeSettings.theme === 'dark' ? 'bg-white text-black' : 'text-muted hover:text-white'
+                    themeSettings.theme === "dark"
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted hover:text-foreground"
                   }`}
                 >
                   <Moon size={14} /> Dark
@@ -127,11 +131,11 @@ export default function SettingsPage() {
             <div className="space-y-2">
               <label className="text-xs font-bold text-muted uppercase tracking-wider">Primary Color</label>
               <div className="flex items-center gap-3">
-                <input 
-                  type="color" 
+                <input
+                  type="color"
                   value={themeSettings.primaryColor}
                   onChange={(e) => setThemeSettings({ ...themeSettings, primaryColor: e.target.value })}
-                  className="w-10 h-10 rounded-xl bg-transparent border border-white/10 cursor-pointer overflow-hidden"
+                  className="w-10 h-10 rounded-xl bg-transparent border border-border cursor-pointer overflow-hidden"
                 />
                 <span className="text-sm font-mono text-muted uppercase">{themeSettings.primaryColor}</span>
               </div>
@@ -139,36 +143,36 @@ export default function SettingsPage() {
           </div>
 
           <div className="space-y-2">
-             <label className="text-xs font-bold text-muted uppercase tracking-wider">Typography</label>
-             <select 
-               value={themeSettings.fontFamily}
-               onChange={(e) => setThemeSettings({ ...themeSettings, fontFamily: e.target.value })}
-               className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm text-white focus:outline-none focus:border-white/20 appearance-none cursor-pointer"
-             >
-               <option value="Inter" className="bg-[#111] text-white">Modern (Inter)</option>
-               <option value="Outfit" className="bg-[#111] text-white">Clean (Outfit)</option>
-               <option value="Playfair Display" className="bg-[#111] text-white">Elegant (Playfair Display)</option>
-               <option value="Space Grotesk" className="bg-[#111] text-white">Futuristic (Space Grotesk)</option>
-             </select>
+            <label className="text-xs font-bold text-muted uppercase tracking-wider">Typography</label>
+            <select
+              value={themeSettings.fontFamily}
+              onChange={(e) => setThemeSettings({ ...themeSettings, fontFamily: e.target.value })}
+              className="w-full h-12 bg-primary-soft border border-border rounded-xl px-4 text-sm text-foreground focus:outline-none focus:border-accent/50 appearance-none cursor-pointer"
+            >
+              <option value="Inter">Modern (Inter)</option>
+              <option value="Outfit">Clean (Outfit)</option>
+              <option value="Playfair Display">Elegant (Playfair Display)</option>
+              <option value="Space Grotesk">Futuristic (Space Grotesk)</option>
+            </select>
           </div>
         </div>
       </section>
 
       <section className="space-y-4">
         <div className="flex items-center gap-2">
-          <Sparkles size={18} className="text-emerald-400" />
+          <Sparkles size={18} className="text-accent" />
           <h2 className="text-lg font-semibold text-foreground">Your plan</h2>
         </div>
 
-        <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-5">
-          <p className="font-semibold text-white text-lg">Free forever</p>
+        <div className="bg-accent-soft border border-accent/20 rounded-2xl p-5">
+          <p className="font-semibold text-foreground text-lg">Free forever</p>
           <p className="text-sm text-muted mt-1">
             pòlówó charges no monthly fee. Focus on selling — not subscriptions.
           </p>
           <ul className="mt-4 space-y-2">
             {FREE_PLATFORM_FEATURES.map((feature) => (
               <li key={feature} className="text-xs text-muted flex items-center gap-2">
-                <Check size={14} className="text-emerald-400 shrink-0" />
+                <Check size={14} className="text-accent shrink-0" />
                 {feature}
               </li>
             ))}
@@ -203,16 +207,16 @@ export default function SettingsPage() {
               <Globe size={14} />
               Storefront URL
             </label>
-            <div className={`flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-4 h-12 transition-all focus-within:border-white/20`}>
+            <div className="flex items-center gap-2 bg-primary-soft border border-border rounded-xl px-4 h-12 transition-all focus-within:border-accent/50">
               <span className="text-muted text-sm shrink-0 select-none">polowo.live/</span>
               <input
                 type="text"
                 value={slug}
                 onChange={(e) => {
-                  const val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
+                  const val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "");
                   setSlug(val);
                 }}
-                className="w-full bg-transparent border-none outline-none text-sm text-white"
+                className="w-full bg-transparent border-none outline-none text-sm text-foreground"
                 placeholder="your-brand"
               />
             </div>
@@ -235,7 +239,7 @@ export default function SettingsPage() {
               Checkout Channels
             </h2>
             <p className="text-sm text-muted mt-1">
-              At least one is required: WhatsApp <span className="text-white/80">or</span> bank account number below
+              At least one is required: WhatsApp <span className="text-foreground/80">or</span> bank account number below
             </p>
           </div>
 

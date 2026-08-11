@@ -25,26 +25,9 @@ Create environment files:
 
 ```bash
 cp frontend/.env.example frontend/.env.local
-cp backend/.env.example backend/.env
 ```
 
-Set `DATABASE_URL` and `JWT_SECRET` in `backend/.env`. PostgreSQL is expected to be provided externally.
-
-Cloudinary image uploads are signed by the backend and uploaded directly from the browser. Add these to `backend/.env`:
-
-```bash
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-```
-
-Backend logs use colored levels and request timing. Set `LOG_LEVEL` in `backend/.env` to control verbosity:
-
-```bash
-LOG_LEVEL=info
-```
-
-Supported values are `debug`, `info`, `warn`, `error`, and `silent`. Set `NO_COLOR=1` to disable terminal colors.
+Configure the backend separately (see `backend/` — database, JWT, Cloudinary, email, etc.).
 
 ## Database
 
@@ -82,9 +65,9 @@ The frontend runs on `http://localhost:3000` and proxies `/api/*` to `NEXT_PUBLI
 
 ## Production Deployment
 
-Set the same required variables shown in `frontend/.env.example` and `backend/.env.example` on your host. At minimum, the backend needs a database URL and JWT secret; optional integrations such as Cloudinary, Resend, and Paystack require their respective keys.
+Set variables from `frontend/.env.example` on the frontend host. Configure the backend with its own environment (database, JWT, Cloudinary, optional Resend and Paystack).
 
-Before deploying, run the frontend build and backend typecheck locally or in CI.
+Before deploying, run the frontend build locally or in CI (`.github/workflows/frontend.yml`).
 
 ## Useful Scripts
 

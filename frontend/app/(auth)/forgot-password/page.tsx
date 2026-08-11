@@ -28,8 +28,8 @@ export default function ForgotPasswordPage() {
       });
       setSent(true);
       toast.success("Check your email for the reset link!");
-    } catch (error: any) {
-      toast.error(error.message || "Could not send reset link");
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : "Could not send reset link");
     }
 
     setIsLoading(false);

@@ -53,8 +53,8 @@ export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise
 export async function publicApiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
   const baseUrl =
     typeof window === "undefined"
-      ? process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"
-      : API_URL;
+      ? process.env.NEXT_PUBLIC_API_URL || "https://advertise-dsdu.onrender.com"
+      : API_URL || "";
   const res = await fetch(`${baseUrl}${path}`, init);
   const text = await res.text();
   const data = text ? JSON.parse(text) : null;

@@ -30,10 +30,10 @@ export default function AnalyticsPage() {
   if (isLoading) {
     return (
       <div className="space-y-8 animate-fade-in">
-        <div className="h-10 w-48 bg-white/5 rounded-lg animate-pulse" />
+        <div className="h-10 w-48 bg-primary-soft rounded-lg animate-pulse" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-32 bg-white/5 rounded-2xl animate-pulse" />
+            <div key={i} className="h-32 bg-primary-soft rounded-2xl animate-pulse" />
           ))}
         </div>
       </div>
@@ -64,26 +64,24 @@ export default function AnalyticsPage() {
   return (
     <div className="space-y-8 animate-fade-in">
       <div>
-        <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
+        <h1 className="text-3xl font-bold text-foreground tracking-tight flex items-center gap-3">
           <BarChart3 className="text-primary" />
           Analytics
         </h1>
-        <p className="text-muted mt-1 text-sm">
-          Included free with your {brand.name} storefront.
-        </p>
+        <p className="text-muted mt-1 text-sm">Included free with your {brand.name} storefront.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {statCards.map((card) => (
           <div
             key={card.label}
-            className="bg-surface border border-white/5 rounded-2xl p-6 hover:border-white/10 transition-colors"
+            className="bg-surface border border-border rounded-2xl p-6 hover:border-primary/20 transition-colors"
           >
             <div className="flex items-center gap-3 text-muted mb-4">
               <card.icon size={18} />
               <span className="text-xs font-bold uppercase tracking-wider">{card.label}</span>
             </div>
-            <p className="text-3xl font-bold text-white">{card.value}</p>
+            <p className="text-3xl font-bold text-foreground">{card.value}</p>
             <p className="text-xs text-muted mt-2">{card.sub}</p>
           </div>
         ))}

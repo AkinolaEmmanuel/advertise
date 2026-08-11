@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import AdminShell from "@/components/admin/AdminShell";
 import { getCurrentUser } from "@/lib/auth";
+import { isPublicAdminEmail } from "@/lib/admin-emails";
 
 export default function AdminLayout({
   children,
@@ -17,8 +18,7 @@ export default function AdminLayout({
     async function checkAdmin() {
       try {
         const { user } = await getCurrentUser();
-        const adminEmails = process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(",").map((email) => email.trim()) || [];
-        if (!adminEmails.includes(user.email)) {
+        if (!isPublicAdminEmail(user.email)) {
           router.push("/dashboard");
           return;
         }

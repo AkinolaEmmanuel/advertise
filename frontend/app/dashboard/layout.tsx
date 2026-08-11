@@ -47,14 +47,14 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     return (
       <div className="min-h-screen flex items-center justify-center p-6">
         <div className="max-w-md text-center space-y-4">
-          <h1 className="text-xl font-bold text-white">Store not found</h1>
+          <h1 className="text-xl font-bold text-foreground">Store not found</h1>
           <p className="text-sm text-muted">
             Your account is signed in, but no storefront is linked to it. Create a new store or contact support if this looks wrong.
           </p>
           <button
             type="button"
             onClick={() => router.push("/signup")}
-            className="px-6 py-2.5 rounded-xl bg-primary text-black text-xs font-bold hover:bg-primary-hover transition-colors cursor-pointer"
+            className="px-6 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary-hover transition-colors cursor-pointer"
           >
             Create a store
           </button>
@@ -73,7 +73,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               <div className="flex items-start gap-3">
                 <AlertCircle size={20} className="text-danger shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="text-sm font-bold text-white">Checkout not set up</h4>
+                  <h4 className="text-sm font-bold text-foreground">Checkout not set up</h4>
                   <p className="text-xs text-muted mt-1">
                     Add a WhatsApp number or bank account number in settings so customers can place orders.
                   </p>
@@ -81,18 +81,18 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               </div>
               <Link
                 href="/dashboard/settings"
-                className="shrink-0 px-5 py-2 rounded-xl bg-white text-black text-xs font-bold hover:bg-neutral-200 transition-colors"
+                className="shrink-0 px-5 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary-hover transition-colors"
               >
                 Complete setup
               </Link>
             </div>
           )}
-          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4 flex items-start gap-3 animate-fade-in">
-            <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+          <div className="bg-accent-soft border border-accent/20 rounded-2xl p-4 flex items-start gap-3 animate-fade-in">
+            <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-accent shrink-0">
               <Crown size={20} />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-white">Free forever on pòlówó</h4>
+              <h4 className="text-sm font-bold text-foreground">Free forever on pòlówó</h4>
               <p className="text-xs text-muted mt-1">
                 Your storefront, products, orders, and analytics are included at no cost — no subscription or trial limits.
               </p>

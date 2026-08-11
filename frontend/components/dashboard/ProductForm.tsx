@@ -143,7 +143,7 @@ export default function ProductForm({ brandId, product, onSuccess, onCancel }: P
             }}
             className="sr-only peer"
           />
-          <div className="w-9 h-5 bg-surface-hover rounded-full peer peer-checked:bg-white transition-colors duration-200 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white peer-checked:after:bg-black after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full relative" />
+          <div className="relative w-9 h-5 bg-surface-hover rounded-full peer peer-checked:bg-primary transition-colors duration-200 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-foreground peer-checked:after:bg-primary-foreground after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full" />
           <span className="text-sm text-muted">Track stock quantity</span>
         </label>
 

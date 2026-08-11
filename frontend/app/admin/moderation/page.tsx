@@ -49,20 +49,20 @@ export default function ModerationPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-white">Moderation Queue</h1>
+        <h1 className="text-3xl font-bold text-foreground">Moderation Queue</h1>
         <p className="text-muted mt-1">Review and resolve flagged accounts.</p>
       </div>
 
       {isLoading ? (
-        <div className="bg-surface border border-white/5 rounded-2xl p-12 text-center">
+        <div className="bg-surface border border-border rounded-2xl p-12 text-center">
           <p className="text-muted animate-pulse">Loading queue...</p>
         </div>
       ) : brands.length === 0 ? (
-        <div className="bg-surface border border-white/5 rounded-2xl p-12 flex flex-col items-center justify-center text-center">
-          <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center mb-4">
+        <div className="bg-surface border border-border rounded-2xl p-12 flex flex-col items-center justify-center text-center">
+          <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mb-4">
             <CheckCircle size={32} className="text-green-500" />
           </div>
-          <h2 className="text-xl font-bold text-white mb-2">Queue Clear</h2>
+          <h2 className="text-xl font-bold text-foreground mb-2">Queue Clear</h2>
           <p className="text-muted">No accounts are currently flagged for review.</p>
         </div>
       ) : (
@@ -74,7 +74,7 @@ export default function ModerationPage() {
                   <ShieldAlert size={24} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white">{brand.name}</h3>
+                  <h3 className="font-bold text-foreground">{brand.name}</h3>
                   <p className="text-sm text-muted">/{brand.slug}</p>
                   <p className="text-[10px] text-muted-foreground mt-1">
                     Joined {new Date(brand.created_at).toLocaleDateString()}
@@ -85,7 +85,7 @@ export default function ModerationPage() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => resolve(brand.id, true)}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-black text-sm font-bold hover:bg-neutral-200 transition-colors cursor-pointer"
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-bold hover:bg-primary-hover transition-colors cursor-pointer"
                 >
                   <CheckCircle size={16} />
                   Approve

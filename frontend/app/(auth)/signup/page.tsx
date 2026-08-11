@@ -93,8 +93,8 @@ export default function SignUpPage() {
   return (
     <>
       <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-foreground">Create your store</h2>
-        <p className="text-muted mt-1.5 text-sm">Start showcasing your products in 60 seconds</p>
+        <h2 className="font-display text-2xl font-bold text-foreground">Create your store</h2>
+        <p className="text-muted mt-1.5 text-sm">Free forever — no credit card needed</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -156,7 +156,7 @@ export default function SignUpPage() {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute bottom-[10px] right-4 text-muted hover:text-white transition-colors cursor-pointer"
+            className="absolute bottom-[10px] right-4 text-muted hover:text-foreground transition-colors cursor-pointer"
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
@@ -169,7 +169,7 @@ export default function SignUpPage() {
 
       <p className="text-center text-sm text-muted mt-6">
         Already have an account?{" "}
-        <Link href="/login" className="text-primary hover:text-primary-hover font-medium transition-colors">
+        <Link href="/login" className="text-accent hover:text-accent-hover font-medium transition-colors">
           Sign in
         </Link>
       </p>

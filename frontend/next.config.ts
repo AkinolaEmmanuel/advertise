@@ -10,7 +10,8 @@ const nextConfig: NextConfig = {
     ],
   },
   async rewrites() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+    const apiUrl =
+      process.env.NEXT_PUBLIC_API_URL || "https://advertise-dsdu.onrender.com";
     return [
       {
         source: "/api/:path*",

@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { Eye, EyeOff } from "lucide-react";
 import { useEffect } from "react";
 import { login } from "@/lib/auth";
+import { isPublicAdminEmail } from "@/lib/admin-emails";
 
 import { Suspense } from "react";
 
@@ -21,11 +22,8 @@ function LoginContent() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const error = searchParams.get("error");
-    if (error === "session_expired") {
+    if (searchParams.get("error") === "session_expired") {
       toast.error("Your session has expired. Please sign in again.");
-    } else if (error === "config") {
-      toast.error("App configuration is incomplete. Contact support.");
     }
   }, [searchParams]);
 
@@ -42,8 +40,7 @@ function LoginContent() {
       const data = await login(email, password);
       toast.success("Welcome back!");
 
-      const adminEmails = process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(",") || ["akinola@gmail.com", "admin@polowo.live"];
-      if (adminEmails.includes(data.user.email)) {
+      if (isPublicAdminEmail(data.user.email)) {
         router.push("/admin");
       } else {
         router.push("/dashboard");
@@ -88,7 +85,7 @@ function LoginContent() {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute bottom-[10px] right-4 text-muted hover:text-white transition-colors cursor-pointer"
+            className="absolute bottom-[10px] right-4 text-muted hover:text-foreground transition-colors cursor-pointer"
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
@@ -97,7 +94,7 @@ function LoginContent() {
         <div className="flex justify-end">
           <Link
             href="/forgot-password"
-            className="text-sm text-muted hover:text-white font-medium transition-colors"
+            className="text-sm text-muted hover:text-foreground font-medium transition-colors"
           >
             Forgot password?
           </Link>
@@ -110,7 +107,7 @@ function LoginContent() {
 
       <p className="text-center text-sm text-muted mt-6">
         Don&apos;t have an account?{" "}
-        <Link href="/signup" className="text-primary hover:text-primary-hover font-medium transition-colors">
+        <Link href="/signup" className="text-accent hover:text-accent-hover font-medium transition-colors">
           Create one
         </Link>
       </p>

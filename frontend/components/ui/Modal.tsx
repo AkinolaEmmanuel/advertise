@@ -45,18 +45,18 @@ export default function Modal({ isOpen, onClose, title, children, size = "md" }:
       aria-modal="true"
     >
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in"
+        className="absolute inset-0 bg-overlay backdrop-blur-sm animate-fade-in"
         onClick={onClose}
       />
       <div
-        className={`relative w-full ${sizes[size]} bg-surface border border-white/10 sm:rounded-2xl rounded-t-2xl shadow-2xl animate-slide-up max-h-[90vh] sm:max-h-[85vh] flex flex-col sm:m-4`}
+        className={`relative w-full ${sizes[size]} bg-surface border border-border sm:rounded-2xl rounded-t-2xl shadow-2xl animate-slide-up max-h-[90vh] sm:max-h-[85vh] flex flex-col sm:m-4`}
       >
         {title && (
-          <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-white/5 shrink-0">
+          <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-border shrink-0">
             <h2 className="text-base sm:text-lg font-semibold text-foreground">{title}</h2>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg text-muted hover:text-foreground hover:bg-white/5 transition-colors cursor-pointer"
+              className="p-1.5 rounded-lg text-muted hover:text-foreground hover:bg-primary-soft transition-colors cursor-pointer"
             >
               <X size={18} />
             </button>

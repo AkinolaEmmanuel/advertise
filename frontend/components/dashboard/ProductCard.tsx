@@ -20,7 +20,7 @@ export default function ProductCard({ product, onToggle, onEdit, onDelete }: Pro
   const outOfStock = isOutOfStock(product);
 
   return (
-    <div className="bg-surface border border-border rounded-2xl overflow-hidden transition-all duration-300 hover:border-white/20 group animate-fade-in">
+    <div className="bg-surface border border-border rounded-2xl overflow-hidden transition-all duration-300 hover:border-primary/30 group animate-fade-in">
       <div className="relative aspect-square bg-surface-hover">
         {product.image_url ? (
           <Image
@@ -46,7 +46,7 @@ export default function ProductCard({ product, onToggle, onEdit, onDelete }: Pro
 
         {outOfStock && product.is_active && (
           <div className="absolute top-2 left-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider bg-danger text-white px-2 py-0.5 rounded-md">
+            <span className="text-[10px] font-bold uppercase tracking-wider bg-danger text-primary-foreground px-2 py-0.5 rounded-md">
               Out of Stock
             </span>
           </div>
@@ -74,14 +74,14 @@ export default function ProductCard({ product, onToggle, onEdit, onDelete }: Pro
               onChange={() => onToggle(product.id, !product.is_active)}
               className="sr-only peer"
             />
-            <div className="w-9 h-5 bg-surface-hover rounded-full peer peer-checked:bg-white transition-colors duration-200 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white peer-checked:after:bg-black after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full" />
+            <div className="relative w-9 h-5 bg-surface-hover rounded-full peer peer-checked:bg-primary transition-colors duration-200 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-foreground peer-checked:after:bg-primary-foreground after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full" />
             <span className="ml-2 text-xs text-muted">{product.is_active ? "Live" : "Off"}</span>
           </label>
 
           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
               onClick={() => onEdit(product)}
-              className="p-2 rounded-lg text-muted hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+              className="p-2 rounded-lg text-muted hover:text-foreground hover:bg-primary-soft transition-colors cursor-pointer"
               title="Edit"
             >
               <Pencil size={14} />

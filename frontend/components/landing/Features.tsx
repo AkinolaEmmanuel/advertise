@@ -2,122 +2,80 @@
 
 import { motion } from "framer-motion";
 import {
-  Zap,
-  Eye,
   MessageCircle,
   Palette,
   ShoppingBag,
   Globe,
+  BarChart3,
+  Infinity,
 } from "lucide-react";
+import SectionHeader from "@/components/marketing/SectionHeader";
 
 const features = [
   {
-    icon: Palette,
-    title: "Storefront Aesthetic",
-    desc: "Premium visual-first product display that makes your brand look professional",
+    icon: Infinity,
+    title: "Unlimited products",
+    desc: "No 5-product caps. List your full catalog for free — forever.",
+    className: "md:col-span-2",
   },
   {
     icon: ShoppingBag,
-    title: "Smart Cart",
-    desc: "Customers add multiple items and checkout via one WhatsApp message",
+    title: "Smart cart",
+    desc: "Customers add multiple items and checkout in one WhatsApp message.",
+    className: "",
   },
   {
     icon: MessageCircle,
-    title: "DM Checkout",
-    desc: "Pre-filled WhatsApp messages with complete order details for easy sales",
+    title: "WhatsApp + bank transfer",
+    desc: "Meet buyers where they already pay — DM or direct transfer.",
+    className: "",
   },
   {
-    icon: Zap,
-    title: "60-Second Setup",
-    desc: "Sign up, upload products, share your link. That's it. No complex setup.",
+    icon: Palette,
+    title: "Branded storefront",
+    desc: "Custom colors, light or dark theme, and your own polowo.live/slug URL.",
+    className: "",
   },
   {
-    icon: Eye,
-    title: "Live Toggle",
-    desc: "Show or hide products instantly with simple on/off switches",
+    icon: BarChart3,
+    title: "Order logs & analytics",
+    desc: "Track visits, WhatsApp clicks, and every order in one dashboard.",
+    className: "",
   },
   {
     icon: Globe,
-    title: "One Link for All",
-    desc: "Share polowo.live/yourname everywhere — bio, DMs, everywhere",
+    title: "Brand directory",
+    desc: "Get discovered on pòlówó's explore page — share your link everywhere.",
+    className: "md:col-span-2",
   },
 ];
 
-const containerVariants = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.08 },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0, 0, 0.2, 1] as const } },
-};
-
 export default function Features() {
   return (
-    <section id="features" className="py-24 sm:py-28 border-t border-white/5">
+    <section id="features" className="py-20 sm:py-24 border-t border-border">
       <div className="max-w-6xl mx-auto px-6 sm:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-3xl sm:text-4xl font-bold">Everything you need to sell visually</h2>
-          <p className="mt-4 text-muted text-lg max-w-xl mx-auto">
-            Simpler than Shopify, more powerful than a social media link
-          </p>
-        </motion.div>
+        <SectionHeader
+          eyebrow="Features"
+          title="Everything you need to sell on social"
+          subtitle="Simpler than Bumpa. More generous than Myshoplet's free tier. Built for WhatsApp-first sellers."
+        />
 
-        {/* Desktop Grid */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-60px" }}
-          className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-px bg-white/5 rounded-2xl overflow-hidden border border-white/5"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {features.map((feature, i) => (
             <motion.div
-              key={i}
-              variants={itemVariants}
-              className="bg-surface p-8 hover:bg-surface-hover transition-colors duration-300"
-            >
-              <div className="w-10 h-10 rounded-lg border border-white/10 flex items-center justify-center text-white mb-5 transition-transform group-hover:scale-110">
-                <feature.icon size={18} />
-              </div>
-              <h3 className="font-semibold text-white text-base mb-2 uppercase tracking-tight">{feature.title}</h3>
-              <p className="text-muted text-sm leading-relaxed">{feature.desc}</p>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Mobile Carousel */}
-        <div className="md:hidden -mx-6 px-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory flex gap-4 pb-4">
-          {features.map((feature, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
+              key={feature.title}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
               transition={{ duration: 0.4, delay: i * 0.05 }}
-              className="bg-surface border border-white/5 rounded-2xl p-7 min-w-[260px] w-[80vw] snap-center shrink-0"
+              className={`rounded-2xl border border-border bg-surface p-6 sm:p-7 hover:bg-surface-hover transition-colors ${feature.className}`}
             >
-              <div className="w-10 h-10 rounded-lg border border-white/10 flex items-center justify-center text-white mb-5">
-                <feature.icon size={18} />
+              <div className="w-10 h-10 rounded-xl bg-accent-soft flex items-center justify-center text-accent mb-4">
+                <feature.icon size={20} />
               </div>
-              <h3 className="font-semibold text-white text-base mb-2 uppercase tracking-tight">{feature.title}</h3>
+              <h3 className="font-display font-semibold text-foreground text-lg mb-2">{feature.title}</h3>
               <p className="text-muted text-sm leading-relaxed">{feature.desc}</p>
             </motion.div>
-          ))}
-        </div>
-        
-        <div className="md:hidden flex justify-center gap-1.5 mt-4">
-          {features.map((_, i) => (
-            <div key={i} className="w-1 h-1 rounded-full bg-white/20" />
           ))}
         </div>
       </div>
